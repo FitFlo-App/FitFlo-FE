@@ -3,7 +3,7 @@ const Tech = () => {
   return (
     <div>
       {/* Powered by Cutting-Edge Technology Section */}
-      <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:pt-14 lg:pb-4 mx-auto">
+      <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:pt-9 lg:pb-4 mx-auto">
         {/* Title */}
         <div className="w-2/3 sm:w-1/2 lg:w-1/3 mx-auto text-center mb-6">
           <h2 className="text-gray-600">Powered by Cutting-Edge Technology</h2>

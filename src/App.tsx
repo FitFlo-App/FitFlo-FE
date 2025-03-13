@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { ConfigProvider } from "antd";
+import { ProtectedRoute } from "./utils/auth";
 
 import IndexPage from "@/pages/index";
 import AboutPage from "@/pages/about";
@@ -24,17 +25,62 @@ function App() {
       }}
     >
       <Routes>
+        {/* Public routes */}
         <Route element={<IndexPage />} path="/" />
         <Route element={<AboutPage />} path="/about" />
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
-        <Route element={<Dashboard />} path="/dashboard" />
         <Route element={<ForgetPasswordPage />} path="/forgetpassword" />
-        <Route element={<MilestonesPage />} path="/milestones" />
-        <Route element={<ProfilePage />} path="/profile" />
-        <Route element={<PersonalCarePage />} path="/personal-care" />
-        <Route element={<PathwayPlannerPage />} path="/pathway" />
-        <Route element={<HealthcarePage />} path="/healthcare" />
+
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/milestones"
+          element={
+            <ProtectedRoute>
+              <MilestonesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/personal-care"
+          element={
+            <ProtectedRoute>
+              <PersonalCarePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pathway"
+          element={
+            <ProtectedRoute>
+              <PathwayPlannerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/healthcare"
+          element={
+            <ProtectedRoute>
+              <HealthcarePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </ConfigProvider>
   );

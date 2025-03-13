@@ -16,6 +16,8 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme } from "antd";
 
+import { useAuth } from "../utils/auth";
+
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -32,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -75,7 +78,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleLogout = () => {
-    window.location.href = "/";
+    logout();
+    navigate("/");
   };
 
   const items: MenuProps["items"] = [
@@ -129,8 +133,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       {isMobile && !collapsed && (
         <div
           aria-label="Close sidebar"
-          role="button"
           className="fixed inset-0 bg-black/50 z-[90]"
+          role="button"
           tabIndex={0}
           onClick={handleToggleCollapse}
           onKeyDown={(e) => {
@@ -144,8 +148,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile menu toggle button that appears when sidebar is collapsed */}
       {isMobile && collapsed && (
         <Button
-          icon={<MenuUnfoldOutlined />}
           className="fixed top-5 left-5 z-[99]"
+          icon={<MenuUnfoldOutlined />}
           type="primary"
           onClick={handleToggleCollapse}
         />
@@ -154,9 +158,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       <Sider
         collapsible
         breakpoint="md"
+        className="border-r border-[#f0f0f0] overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[100]"
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
-        className="border-r border-[#f0f0f0] overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[100]"
         style={{ backgroundColor: colorBgContainer }}
         trigger={null}
         width={250}
@@ -175,27 +179,27 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
           <Button
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             className="text-base"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             type="text"
             onClick={handleToggleCollapse}
           />
         </div>
 
         <Menu
+          className="border-r-0"
           defaultSelectedKeys={[location.pathname]}
           items={items}
           mode="inline"
           selectedKeys={[location.pathname]}
-          className="border-r-0"
           onClick={handleMenuClick}
         />
 
         <div className="p-4 absolute bottom-0 w-full border-t border-[#f0f0f0]">
           <Button
             danger
-            icon={<LogoutOutlined />}
             className="w-full"
+            icon={<LogoutOutlined />}
             type="primary"
             onClick={handleLogout}
           >

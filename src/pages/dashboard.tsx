@@ -1,41 +1,42 @@
+import type { MenuProps } from "antd";
+
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
-import { useAuth } from "@/utils/auth";
-import AppLayout from "@/components/AppLayout";
-import { 
-  Row, 
-  Col, 
-  Button, 
-  Tabs, 
-  Typography, 
-  Input, 
-  Badge, 
-  Avatar, 
-  Dropdown, 
+import {
+  Button,
+  Tabs,
+  Typography,
+  Input,
+  Badge,
+  Avatar,
+  Dropdown,
   Space,
   Popover,
   List,
-  Divider
+  Divider,
 } from "antd";
-import { 
-  SearchOutlined, 
-  BellOutlined, 
+import {
+  SearchOutlined,
+  BellOutlined,
   UserOutlined,
   LogoutOutlined,
   SettingOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import HealthInsights from "@/components/HealthInsights";
-import RealTimeMonitoring from "@/components/RealTimeMonitoring";
-import TreatmentPlan from "@/components/TreatmentPlan";
-import CostManagement from "@/components/CostManagement";
-import { Card } from "@/components/ui/card";
 import {
   DashboardOutlined,
   HeartOutlined,
   LineChartOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
+
+import { useAuth } from "@/utils/auth";
+import AppLayout from "@/components/AppLayout";
+import HealthInsights from "@/components/HealthInsights";
+import RealTimeMonitoring from "@/components/RealTimeMonitoring";
+import TreatmentPlan from "@/components/TreatmentPlan";
+import CostManagement from "@/components/CostManagement";
+import { Card } from "@/components/ui/card";
 
 const { Title } = Typography;
 
@@ -52,33 +53,33 @@ const healthMetrics = {
 // Sample notification data
 const notifications = [
   {
-    id: '1',
-    title: 'Heart Rate Alert',
-    description: 'Your heart rate was abnormally high at 3:00 PM',
-    time: '30 minutes ago',
-    read: false
+    id: "1",
+    title: "Heart Rate Alert",
+    description: "Your heart rate was abnormally high at 3:00 PM",
+    time: "30 minutes ago",
+    read: false,
   },
   {
-    id: '2',
-    title: 'Medication Reminder',
-    description: 'Time to take your evening medication',
-    time: '1 hour ago',
-    read: false
+    id: "2",
+    title: "Medication Reminder",
+    description: "Time to take your evening medication",
+    time: "1 hour ago",
+    read: false,
   },
   {
-    id: '3',
-    title: 'Doctor Appointment',
-    description: 'Reminder: Appointment with Dr. Smith tomorrow at 10:00 AM',
-    time: '3 hours ago',
-    read: true
+    id: "3",
+    title: "Doctor Appointment",
+    description: "Reminder: Appointment with Dr. Smith tomorrow at 10:00 AM",
+    time: "3 hours ago",
+    read: true,
   },
   {
-    id: '4',
-    title: 'Progress Update',
-    description: 'You reached 80% of your daily step goal!',
-    time: '5 hours ago',
-    read: true
-  }
+    id: "4",
+    title: "Progress Update",
+    description: "You reached 80% of your daily step goal!",
+    time: "5 hours ago",
+    read: true,
+  },
 ];
 
 const Dashboard = () => {
@@ -92,7 +93,7 @@ const Dashboard = () => {
     setIsConnected(true);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
@@ -109,63 +110,73 @@ const Dashboard = () => {
   >(null);
 
   // User dropdown menu items
-  const userMenuItems = {
-    items: [
-      {
-        key: '1',
-        label: 'Profile',
-        icon: <UserOutlined />,
-      },
-      {
-        key: '2',
-        label: 'Settings',
-        icon: <SettingOutlined />,
-      },
-      {
-        type: 'divider',
-      },
-      {
-        key: '3',
-        label: 'Logout',
-        icon: <LogoutOutlined />,
-        onClick: handleLogout,
-      },
-    ],
-  };
+  const userMenuItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: "Profile",
+      icon: <UserOutlined />,
+    },
+    {
+      key: "2",
+      label: "Settings",
+      icon: <SettingOutlined />,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "3",
+      label: "Logout",
+      icon: <LogoutOutlined />,
+      onClick: handleLogout,
+    },
+  ];
 
   // Notification popover content
   const notificationContent = (
     <div style={{ width: 300 }}>
       <div className="flex justify-between items-center mb-2">
         <span className="font-semibold">Notifications</span>
-        <Button type="text" size="small" onClick={handleClearNotifications}>
+        <Button size="small" type="text" onClick={handleClearNotifications}>
           Mark all as read
         </Button>
       </div>
-      <Divider style={{ margin: '8px 0' }} />
+      <Divider style={{ margin: "8px 0" }} />
       <List
-        size="small"
         dataSource={notifications}
         renderItem={(item) => (
-          <List.Item 
-            className={`cursor-pointer hover:bg-slate-50 ${!item.read ? 'bg-blue-50' : ''}`}
+          <List.Item
+            className={`cursor-pointer hover:bg-slate-50 ${!item.read ? "bg-blue-50" : ""}`}
           >
             <List.Item.Meta
-              avatar={<ExclamationCircleOutlined style={{ color: !item.read ? '#1677ff' : '#8c8c8c' }} />}
-              title={<span style={{ fontWeight: !item.read ? 600 : 400 }}>{item.title}</span>}
+              avatar={
+                <ExclamationCircleOutlined
+                  style={{ color: !item.read ? "#1677ff" : "#8c8c8c" }}
+                />
+              }
               description={
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">{item.description}</p>
+                  <p className="text-xs text-gray-600 mb-1">
+                    {item.description}
+                  </p>
                   <p className="text-xs text-gray-400">{item.time}</p>
                 </div>
+              }
+              title={
+                <span style={{ fontWeight: !item.read ? 600 : 400 }}>
+                  {item.title}
+                </span>
               }
             />
           </List.Item>
         )}
+        size="small"
       />
-      <Divider style={{ margin: '8px 0' }} />
+      <Divider style={{ margin: "8px 0" }} />
       <div className="text-center">
-        <Button type="link" size="small">View All</Button>
+        <Button size="small" type="link">
+          View All
+        </Button>
       </div>
     </div>
   );
@@ -211,14 +222,14 @@ const Dashboard = () => {
       children: (
         <div className="space-y-6">
           <Card className="bg-white p-6">
-            <Title level={3} className="mb-6">
+            <Title className="mb-6" level={3}>
               Interactive Health Anatomy
             </Title>
             <div className="relative flex justify-center">
               <img
-                src="/humanbody.png"
                 alt="Human Anatomy"
                 className="max-h-[600px] object-contain"
+                src="/humanbody.png"
               />
 
               {Object.entries({
@@ -233,23 +244,26 @@ const Dashboard = () => {
                 "💤 Sleep":
                   "top-[10%] left-[50%] -translate-x-[50%] bg-teal-500",
               }).map(([label, position]) => (
-                <span
+                <button
                   key={label}
+                  aria-label={`View ${label} details`}
                   className={`absolute ${position} text-white px-3 py-1 rounded-lg shadow cursor-pointer hover:scale-110 transition-transform`}
+                  type="button"
                   onClick={() => {
                     const metricKey = label.replace(/^[^\w]+/, "").trim();
+
                     setSelectedMetric(metricKey as keyof typeof healthMetrics);
                   }}
                 >
                   {label}
-                </span>
+                </button>
               ))}
 
               {selectedMetric && (
                 <Dialog
+                  className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
                   open={true}
                   onClose={() => setSelectedMetric(null)}
-                  className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
                 >
                   <div className="bg-white p-6 rounded-lg shadow-lg w-[500px] flex flex-col items-center">
                     <h2 className="text-2xl font-semibold mb-4 text-center">
@@ -288,18 +302,18 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <Title level={3}>Smart Device Connection</Title>
               <Button
+                className={isConnected ? "bg-green-600" : ""}
                 type="primary"
                 onClick={handleConnect}
-                className={isConnected ? "bg-green-600" : ""}
               >
                 {isConnected ? "Connected" : "Connect to Smart Watch"}
               </Button>
             </div>
             <div className="flex justify-center">
               <img
-                src="/smart_watch.png"
                 alt="Smart Watch"
                 className="w-40 h-auto mb-4 mt-4"
+                src="/smart_watch.png"
               />
             </div>
             {isConnected && (
@@ -330,41 +344,48 @@ const Dashboard = () => {
           {/* Search bar updated with Ant Design Input */}
           <div className="w-2/3">
             <Input
+              allowClear
+              className="rounded-lg"
               placeholder="Search health records, medications, appointments..."
               prefix={<SearchOutlined className="text-gray-400" />}
+              size="large"
               value={searchValue}
               onChange={handleSearchChange}
-              size="large"
-              className="rounded-lg"
-              allowClear
             />
           </div>
           <div className="flex items-center gap-4">
             {/* Notification with Ant Design Badge and Popover */}
-            <Popover 
-              content={notificationContent} 
-              title={null} 
-              trigger="click" 
-              placement="bottomRight"
-              overlayClassName="notification-popover"
+            <Popover
               arrow={false}
+              content={notificationContent}
+              overlayClassName="notification-popover"
+              placement="bottomRight"
+              title={null}
+              trigger="click"
             >
               <Badge count={notificationCount} overflowCount={99}>
-                <Button 
-                  type="text" 
-                  icon={<BellOutlined style={{ fontSize: '18px' }} />} 
-                  size="large"
+                <Button
                   className="flex items-center justify-center"
+                  icon={<BellOutlined style={{ fontSize: "18px" }} />}
+                  size="large"
+                  type="text"
                 />
               </Badge>
             </Popover>
 
             {/* User profile with Ant Design Dropdown */}
-            <Dropdown menu={userMenuItems} placement="bottomRight" arrow>
-              <a onClick={(e) => e.preventDefault()} className="cursor-pointer">
+            <Dropdown
+              arrow
+              menu={{ items: userMenuItems }}
+              placement="bottomRight"
+            >
+              <button
+                className="flex items-center cursor-pointer"
+                onClick={(e) => e.preventDefault()}
+              >
                 <Space>
                   {user?.avatar ? (
-                    <Avatar src={user.avatar} size="default" />
+                    <Avatar size="default" src={user.avatar} />
                   ) : (
                     <Avatar icon={<UserOutlined />} size="default" />
                   )}
@@ -372,7 +393,7 @@ const Dashboard = () => {
                     {user?.name || user?.email || "User"}
                   </span>
                 </Space>
-              </a>
+              </button>
             </Dropdown>
           </div>
         </div>
@@ -382,11 +403,11 @@ const Dashboard = () => {
         </h1>
 
         <Tabs
-          defaultActiveKey="1"
           activeKey={activeTab}
-          onChange={setActiveTab}
-          items={items}
           className="dashboard-tabs"
+          defaultActiveKey="1"
+          items={items}
+          onChange={setActiveTab}
         />
       </div>
     </AppLayout>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import Sidebar from "@/components/sidebar";
+import AppLayout from "@/components/AppLayout";
 import { motion } from "framer-motion";
 import { Send, Bot } from "lucide-react";
 import Card from "@/components/ui/card";
@@ -21,7 +21,10 @@ const PathwayPlanner: React.FC = () => {
     setUserInput("");
 
     setTimeout(() => {
-      setMessages((prev) => [...prev, { sender: "bot", text: generateBotResponse(userInput) }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: generateBotResponse(userInput) },
+      ]);
     }, 1000);
   };
 
@@ -30,18 +33,21 @@ const PathwayPlanner: React.FC = () => {
   }, [messages]);
 
   const generateBotResponse = (input: string) => {
-    if (input.toLowerCase().includes("tired")) return "Make sure to get enough rest and stay hydrated!";
-    if (input.toLowerCase().includes("happy")) return "That's great! Keep spreading positivity!";
-    if (input.toLowerCase().includes("stressed")) return "Try taking deep breaths and relaxing for a moment.";
+    if (input.toLowerCase().includes("tired"))
+      return "Make sure to get enough rest and stay hydrated!";
+    if (input.toLowerCase().includes("happy"))
+      return "That's great! Keep spreading positivity!";
+    if (input.toLowerCase().includes("stressed"))
+      return "Try taking deep breaths and relaxing for a moment.";
     return "I see. Would you like to talk more about it?";
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-blue-100">
-      <Sidebar />
-
-      <div className="flex-1 flex flex-col p-6">
-        <h1 className="text-2xl font-bold text-gray-700 mb-4">Pathway Planner</h1>
+    <AppLayout>
+      <div className="flex flex-col p-6">
+        <h1 className="text-2xl font-bold text-gray-700 mb-4">
+          Pathway Planner
+        </h1>
         <Card className="flex-1 p-4 bg-white shadow-lg rounded-lg overflow-y-auto max-h-[70vh]">
           <div className="space-y-4">
             {messages.map((msg, index) => (
@@ -80,13 +86,16 @@ const PathwayPlanner: React.FC = () => {
             className="flex-1 mr-2 p-2 border rounded-lg shadow-md"
           />
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button onClick={handleSendMessage} className="p-2 bg-blue-500 text-white rounded-full shadow-lg">
+            <Button
+              onClick={handleSendMessage}
+              className="p-2 bg-blue-500 text-white rounded-full shadow-lg"
+            >
               <Send size={20} />
             </Button>
           </motion.div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 };
 

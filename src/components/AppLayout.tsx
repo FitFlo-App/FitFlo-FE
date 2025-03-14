@@ -9,7 +9,11 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  // Initialize with the value from localStorage if available, otherwise default to false
+  const [collapsed, setCollapsed] = useState(() => {
+    const savedState = localStorage.getItem("sidebarCollapsed");
+    return savedState ? JSON.parse(savedState) : false;
+  });
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -27,24 +31,32 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const handleCollapse = (isCollapsed: boolean) => {
     setCollapsed(isCollapsed);
+    // Save to localStorage whenever it changes
+    localStorage.setItem("sidebarCollapsed", JSON.stringify(isCollapsed));
   };
 
+  // Calculate sidebar width based on collapsed state and device
+  const sidebarWidth = collapsed ? (isMobile ? 0 : 80) : isMobile ? 0 : 250;
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className="min-h-screen overflow-hidden">
+      {/* Sidebar component */}
       <Sidebar collapsed={collapsed} onCollapse={handleCollapse} />
+
+      {/* Main content wrapper */}
       <Layout
+        className="transition-all duration-300 ease-in-out"
         style={{
-          marginLeft: collapsed ? (isMobile ? 0 : 80) : isMobile ? 0 : 250,
-          transition: "margin-left 0.2s",
+          marginLeft: sidebarWidth,
+          background: "transparent",
         }}
       >
+        {/* Main content */}
         <Content
           style={{
-            margin: "24px 16px",
-            padding: 24,
             background: "linear-gradient(to bottom right, #EBF5FF, #E1EFFE)",
-            borderRadius: 8,
-            minHeight: 280,
+            minHeight: "100vh",
+            padding: "20px 24px",
           }}
         >
           {children}

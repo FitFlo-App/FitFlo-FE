@@ -29,8 +29,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   onCollapse,
   collapsed: externalCollapsed,
 }) => {
-  // Use local state as a fallback if no external state is provided
-  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  // Initialize internal state from localStorage if no external state is provided
+  const [internalCollapsed, setInternalCollapsed] = useState(() => {
+    const savedState = localStorage.getItem("sidebarCollapsed");
+
+    return savedState ? JSON.parse(savedState) : false;
+  });
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -56,6 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             onCollapse(true);
           } else {
             setInternalCollapsed(true);
+            localStorage.setItem("sidebarCollapsed", JSON.stringify(true));
           }
         }
       }
@@ -74,6 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       onCollapse(newCollapsed);
     } else {
       setInternalCollapsed(newCollapsed);
+      localStorage.setItem("sidebarCollapsed", JSON.stringify(newCollapsed));
     }
   };
 
@@ -124,6 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
+    // Navigate without changing the collapsed state
     navigate(e.key);
   };
 
@@ -158,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <Sider
         collapsible
         breakpoint="md"
-        className="border-r border-[#f0f0f0] overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[100]"
+        className="overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[100] border-r border-gray-200"
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
         style={{ backgroundColor: colorBgContainer }}

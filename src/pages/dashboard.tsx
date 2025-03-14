@@ -1,4 +1,4 @@
-import { FaBell, FaSearch } from "react-icons/fa";
+import { FaBell, FaSearch, FaUser } from "react-icons/fa";
 import Human from "@/assets/human-body.png";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import SkinTempImg from "@/assets/skin_temp.png";
 import BreathingImg from "@/assets/breathing.png";
 import MotionPostureImg from "@/assets/motion_posture.png";
 import SleepImg from "@/assets/sleep.png";
+import { useAuth } from "@/utils/auth";
 import {
   LineChart,
   Line,
@@ -55,6 +56,7 @@ const healthMetrics = {
 
 const Dashboard = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const { user } = useAuth();
 
   const handleConnect = () => {
     setIsConnected(true);
@@ -77,10 +79,32 @@ const Dashboard = () => {
               className="w-full pl-10 pr-4 py-2 rounded-lg bg-white shadow-sm focus:outline-none"
             />
           </div>
+          <div className="flex items-center gap-4">
           <FaBell className="text-primary text-xl cursor-pointer" />
+
+            {/* User profile section */}
+            <div className="flex items-center gap-2">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                  <FaUser className="text-gray-600" />
+                </div>
+              )}
+              <span className="font-medium">
+                {user?.name || user?.email || "User"}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}!
+        </h1>
         <p className="text-blue-600 text-sm text-right cursor-pointer">
           This Week →
         </p>

@@ -14,9 +14,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => {
@@ -78,7 +80,9 @@ export const authService = {
       const response = await api.post("/user/auth/email/verify", {
         email,
       });
+
       console.log("Verify email response:", response.data);
+
       return response.data;
     } catch (error) {
       console.error("Verify email error:", error);
@@ -88,13 +92,35 @@ export const authService = {
 
   // OAuth with Google (redirect to Google OAuth page)
   googleOAuth: () => {
-    window.location.href = `${API_BASE_URL}/user/auth/google`;
+    // Construct redirect URL with current domain
+    const redirectUrl = window.location.origin + "/oauth-callback";
+    const encodedRedirectUrl = encodeURIComponent(redirectUrl);
+
+    // Add timestamp to prevent caching issues
+    const timestamp = new Date().getTime();
+
+    console.log("Redirecting to Google OAuth with redirect URL:", redirectUrl);
+
+    // Redirect to OAuth endpoint with the redirect URL and debug parameters
+    window.location.href = `${API_BASE_URL}/user/auth/google?redirect_url=${encodedRedirectUrl}&_t=${timestamp}&client=${encodeURIComponent(window.location.origin)}&force=true`;
+
+    console.log(
+      `Full OAuth URL: ${API_BASE_URL}/user/auth/google?redirect_url=${encodedRedirectUrl}&_t=${timestamp}&force=true`
+    );
   },
 
   // Logout
   logout: () => {
+    // Clear all authentication data
+    localStorage.clear();
+
+    // For backward compatibility, explicitly remove these items
     localStorage.removeItem("token");
     localStorage.removeItem("email");
+    localStorage.removeItem("name");
+    localStorage.removeItem("avatar");
+
+    console.log("Logged out, all auth data cleared");
   },
 
   // Check if user is logged in

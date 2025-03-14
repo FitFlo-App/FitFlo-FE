@@ -90,6 +90,23 @@ export const authService = {
     }
   },
 
+  // Check email activation status
+  checkEmailActivation: async (email: string) => {
+    try {
+      console.log("Checking email activation status for:", email);
+      const response = await api.post("/user/auth/email/activation", {
+        email,
+      });
+
+      console.log("Email activation status response:", response.data);
+
+      return response.data;
+    } catch (error) {
+      console.error("Email activation check error:", error);
+      throw error;
+    }
+  },
+
   // OAuth with Google (redirect to Google OAuth page)
   googleOAuth: () => {
     // Construct redirect URL with current domain

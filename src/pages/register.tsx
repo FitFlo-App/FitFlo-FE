@@ -198,16 +198,32 @@ const Register = () => {
     setVerificationAttempts((prev) => prev + 1);
 
     try {
-      // First try the normal verification check
+      // Use the proper endpoint to check activation status
       try {
-        const response = await authService.verifyEmail(formData.email);
+        const response = await authService.checkEmailActivation(formData.email);
 
-        console.log("Verification check response:", response);
+        console.log("Activation status check response:", response);
 
-        // If email is already verified, update state
+        // Check if the email is activated based on the response
+        if (response.status === "success" && response.data?.isActivated) {
+          setEmailVerified(true);
+          setSuccessMessage(
+            "Email verification confirmed! You can now proceed with registration."
+          );
+          setShowAlert(true);
+
+          // Clear the polling interval
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+          }
+        }
+      } catch (err: any) {
+        console.error("Error checking activation status:", err);
+        // Check if the error indicates the email is already verified
         if (
-          response.status === "error" &&
-          response.message === "Email already verified"
+          err.response?.data?.status === "success" && 
+          err.response?.data?.data?.isActivated === true
         ) {
           setEmailVerified(true);
           setSuccessMessage(
@@ -220,62 +236,40 @@ const Register = () => {
             clearInterval(pollingIntervalRef.current);
             pollingIntervalRef.current = null;
           }
-
-          setCheckingStatus(false);
-
-          return;
-        }
-      } catch (err: any) {
-        console.error("Error using first verification method:", err);
-        // Check if the error indicates the email is already verified
-        if (err.response?.data?.message === "Email already verified") {
-          setEmailVerified(true);
-          setSuccessMessage(
-            "Email verification confirmed! You can now proceed with registration."
-          );
-          setShowAlert(true);
-
-          // Clear the polling interval
-          if (pollingIntervalRef.current) {
-            clearInterval(pollingIntervalRef.current);
-            pollingIntervalRef.current = null;
-          }
-
-          setCheckingStatus(false);
-
-          return;
         }
         // Continue to next method if this fails
       }
 
-      // Try to call the verification check URL without credentials
-      try {
-        // Use axios directly without credentials to avoid CORS issues
-        const response = await axios.get(verificationCheckUrl, {
-          withCredentials: false,
-        });
+      // If the direct API call approach doesn't work, try the verification URL as fallback
+      if (!emailVerified && verificationCheckUrl) {
+        try {
+          // Use axios directly without credentials to avoid CORS issues
+          const response = await axios.get(verificationCheckUrl, {
+            withCredentials: false,
+          });
 
-        console.log("Direct verification URL response:", response.data);
+          console.log("Verification URL fallback response:", response.data);
 
-        if (response.data && response.data.status === "success") {
-          // Check if user is verified based on the response
-          if (response.data.data.isVerified === true) {
-            setEmailVerified(true);
-            setSuccessMessage(
-              "Email verification confirmed! You can now proceed with registration."
-            );
-            setShowAlert(true);
+          if (response.data && response.data.status === "success") {
+            // Check if user is verified based on the response
+            if (response.data.data.isActivated === true) {
+              setEmailVerified(true);
+              setSuccessMessage(
+                "Email verification confirmed! You can now proceed with registration."
+              );
+              setShowAlert(true);
 
-            // Clear the polling interval
-            if (pollingIntervalRef.current) {
-              clearInterval(pollingIntervalRef.current);
-              pollingIntervalRef.current = null;
+              // Clear the polling interval
+              if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+                pollingIntervalRef.current = null;
+              }
             }
           }
+        } catch (err: any) {
+          console.error("Error using verification URL:", err);
+          // Don't show an error to the user on automatic checks
         }
-      } catch (err: any) {
-        console.error("Error using direct verification URL:", err);
-        // Don't show an error to the user on automatic checks
       }
     } finally {
       setCheckingStatus(false);

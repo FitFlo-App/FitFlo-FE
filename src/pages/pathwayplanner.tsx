@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
+import Sidebar from "@/components/sidebar";
 import { motion } from "framer-motion";
 import { Send, Bot } from "lucide-react";
 import Card from "@/components/ui/card";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import AppLayout from "@/components/AppLayout";
 
 const initialMessages = [{ sender: "bot", text: "How are you feeling today?" }];
 
@@ -37,13 +37,13 @@ const PathwayPlanner: React.FC = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="flex flex-col h-screen p-6">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col p-6">
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Pathway Planner</h1>
-        
-        {/* Chat Box */}
-        <Card className="flex flex-col flex-grow p-4 bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="flex flex-col flex-grow overflow-y-auto p-4 space-y-6"> {/* Tambah space-y-6 untuk jarak antar pesan */}
+        <Card className="flex-1 p-4 bg-white shadow-lg rounded-lg overflow-y-auto max-h-[70vh]">
+          <div className="space-y-4">
             {messages.map((msg, index) => (
               <motion.div
                 key={index}
@@ -60,8 +60,8 @@ const PathwayPlanner: React.FC = () => {
                 <div
                   className={`p-3 max-w-xs shadow-md relative ${
                     msg.sender === "user"
-                      ? "bg-primary text-white rounded-lg"
-                      : "bg-gray-300 text-black rounded-lg"
+                      ? "bg-primary text-white clip-path-polygon rounded-lg"
+                      : "bg-gray-300 text-black clip-path-polygon-reverse rounded-lg"
                   }`}
                 >
                   {msg.text}
@@ -72,7 +72,7 @@ const PathwayPlanner: React.FC = () => {
           </div>
         </Card>
 
-        <div className="mt-4 flex items-center sticky bottom-0 bg-white p-2 rounded-lg shadow-md">
+        <div className="mt-4 flex items-center">
           <Input
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
@@ -86,7 +86,7 @@ const PathwayPlanner: React.FC = () => {
           </motion.div>
         </div>
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

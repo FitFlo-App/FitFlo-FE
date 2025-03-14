@@ -1,34 +1,49 @@
-import type { DatePickerProps } from "antd";
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Button,
+  DatePicker,
   Input,
-  Alert,
   Select,
-  SelectItem,
-  Textarea,
-  NumberInput,
-} from "@heroui/react";
-import { DatePicker } from "antd";
+  InputNumber,
+  Button,
+  Form,
+  Alert as AntAlert,
+} from "antd";
 
 import { useAuth } from "../utils/auth";
 
-// Import date utilities
+const { TextArea } = Input;
+
+// Custom styles for form inputs
+const inputStyle = {
+  height: "45px",
+  backgroundColor: "#f5f5f5",
+};
+
+const textAreaStyle = {
+  backgroundColor: "#f5f5f5",
+  minHeight: "100px",
+};
+
+const selectStyle = {
+  height: "45px",
+  backgroundColor: "#f5f5f5",
+  textAlign: "left" as const,
+};
+
+const datePickerStyle = {
+  height: "45px",
+  width: "100%",
+  backgroundColor: "#f5f5f5",
+  ".ant-picker-input": {
+    height: "45px",
+  },
+};
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    gender: "",
-    birthDate: "",
-    height: 0,
-    weight: 0,
-    medicalHistory: "",
-  });
+  const [form] = Form.useForm();
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -53,54 +68,12 @@ const CompleteProfile = () => {
     }
   }, [user, navigate]);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      gender: e.target.value,
-    });
-  };
-
-  const handleDateChange: DatePickerProps["onChange"] = (date, dateString) => {
-    setFormData({
-      ...formData,
-      birthDate: typeof dateString === "string" ? dateString : "",
-    });
-  };
-
-  const handleMedicalHistoryChange = (value: string) => {
-    setFormData({
-      ...formData,
-      medicalHistory: value,
-    });
-  };
-
-  const handleHeightChange = (value: number) => {
-    setFormData({
-      ...formData,
-      height: value,
-    });
-  };
-
-  const handleWeightChange = (value: number) => {
-    setFormData({
-      ...formData,
-      weight: value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (values: any) => {
     setIsLoading(true);
 
     try {
       // In a real application, you would save the profile data to the backend here
-      // For example: await api.post('/user/profile', formData);
+      // For example: await api.post('/user/profile', values);
 
       setSuccessMessage("Profile information saved successfully!");
       setShowAlert(true);
@@ -125,12 +98,11 @@ const CompleteProfile = () => {
       {/* Success/Error Alert */}
       {showAlert && (successMessage || errorMessage) && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
-          <Alert
-            isClosable
-            color={errorMessage ? "danger" : "success"}
+          <AntAlert
+            closable
             description={errorMessage || successMessage}
-            title={errorMessage ? "Error" : "Success"}
-            variant="faded"
+            message={errorMessage ? "Error" : "Success"}
+            type={errorMessage ? "error" : "success"}
             onClose={() => {
               setShowAlert(false);
               if (errorMessage) setErrorMessage("");
@@ -141,7 +113,6 @@ const CompleteProfile = () => {
 
       <div className="w-full max-w-[600px] bg-white p-6 sm:p-10 rounded-xl shadow-lg text-center border border-white opacity-90 mt-16 sm:mt-20 md:mt-24 lg:mt-12 mb-16 sm:mb-20 md:mb-24 lg:mb-12">
         <Link className="flex justify-center items-center gap-1" to="/">
-          {/* Add the logo at the top */}
           <img
             alt="FitFlo Logo"
             className="w-[100px] md:w-[180px] z-10 relative"
@@ -157,100 +128,108 @@ const CompleteProfile = () => {
           Complete Your Profile
         </h2>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mt-6 space-y-4">
-            <div className="text-left">
-              <Input
-                isRequired
-                className="w-full"
-                id="fullName"
-                label="Full Name"
-                name="fullName"
-                placeholder="Enter your full name"
-                type="text"
-                value={formData.fullName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="text-left">
-              <Select
-                isRequired
-                className="w-full"
-                label="Gender"
-                placeholder="Select your gender"
-                onChange={handleGenderChange}
-              >
-                <SelectItem key="Male">Male</SelectItem>
-                <SelectItem key="Female">Female</SelectItem>
-              </Select>
-            </div>
-            <div className="text-left">
-              <label
-                className="text-gray-600 text-sm block mb-1"
-                htmlFor="birthDate"
-              >
-                Birth date
-              </label>
-              <DatePicker
-                required
-                className="w-full"
-                format="YYYY-MM-DD"
-                id="birthDate"
-                placeholder="Select birth date"
-                onChange={handleDateChange}
-              />
-            </div>
-            <div className="flex space-x-4">
-              <div className="w-1/2 text-left">
-                <NumberInput
-                  isRequired
-                  className="w-full"
-                  label="Height (cm)"
-                  maxValue={300}
-                  minValue={0}
-                  placeholder="Enter height"
-                  step={1}
-                  value={formData.height}
-                  onValueChange={handleHeightChange}
-                />
-              </div>
-              <div className="w-1/2 text-left">
-                <NumberInput
-                  isRequired
-                  className="w-full"
-                  label="Weight (kg)"
-                  maxValue={500}
-                  minValue={0}
-                  placeholder="Enter weight"
-                  step={0.1}
-                  value={formData.weight}
-                  onValueChange={handleWeightChange}
-                />
-              </div>
-            </div>
-            <div className="text-left">
-              <Textarea
-                isRequired
-                className="w-full"
-                id="medicalHistory"
-                label="Medical History"
-                name="medicalHistory"
-                placeholder="Enter any relevant medical history"
-                value={formData.medicalHistory}
-                onValueChange={handleMedicalHistoryChange}
-              />
-            </div>
+        <Form
+          className="mt-6"
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+        >
+          <Form.Item
+            label="Full Name"
+            name="fullName"
+            rules={[{ required: true, message: "Please enter your full name" }]}
+          >
+            <Input placeholder="Enter your full name" style={inputStyle} />
+          </Form.Item>
 
+          <Form.Item
+            label="Gender"
+            name="gender"
+            rules={[{ required: true, message: "Please select your gender" }]}
+          >
+            <Select
+              dropdownStyle={{ textAlign: "left" }}
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+              ]}
+              placeholder="Select your gender"
+              popupMatchSelectWidth={true}
+              style={selectStyle}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Birth Date"
+            name="birthDate"
+            rules={[
+              { required: true, message: "Please select your birth date" },
+            ]}
+          >
+            <DatePicker
+              format="YYYY-MM-DD"
+              placeholder="Select birth date"
+              style={datePickerStyle}
+            />
+          </Form.Item>
+
+          <div className="flex space-x-4">
+            <Form.Item
+              className="w-1/2"
+              label="Height (cm)"
+              name="height"
+              rules={[{ required: true, message: "Please enter your height" }]}
+            >
+              <InputNumber
+                className="w-full"
+                max={300}
+                min={0}
+                placeholder="Enter height"
+                style={inputStyle}
+              />
+            </Form.Item>
+
+            <Form.Item
+              className="w-1/2"
+              label="Weight (kg)"
+              name="weight"
+              rules={[{ required: true, message: "Please enter your weight" }]}
+            >
+              <InputNumber
+                className="w-full"
+                max={500}
+                min={0}
+                placeholder="Enter weight"
+                step={0.1}
+                style={inputStyle}
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label="Medical History"
+            name="medicalHistory"
+            rules={[
+              { required: true, message: "Please enter your medical history" },
+            ]}
+          >
+            <TextArea
+              placeholder="Enter any relevant medical history"
+              rows={4}
+              style={textAreaStyle}
+            />
+          </Form.Item>
+
+          <Form.Item>
             <Button
-              className="w-full"
-              color="primary"
-              disabled={isLoading}
-              type="submit"
+              className="w-full h-[45px] bg-primary text-white"
+              htmlType="submit"
+              loading={isLoading}
             >
               {isLoading ? "Saving..." : "Complete Registration"}
             </Button>
-          </div>
-        </form>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );

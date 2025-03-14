@@ -13,6 +13,7 @@ import ProfilePage from "@/pages/profile";
 import PersonalCarePage from "@/pages/personalcare";
 import PathwayPlannerPage from "@/pages/pathwayplanner";
 import HealthcarePage from "@/pages/healthcare";
+import CompleteProfile from "@/pages/CompleteProfile";
 
 function App() {
   return (
@@ -33,6 +34,14 @@ function App() {
         <Route element={<ForgetPasswordPage />} path="/forgetpassword" />
 
         {/* Protected routes */}
+        <Route
+          path="/complete-profile"
+          element={
+            <ProtectedRoute>
+              <CompleteProfile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={

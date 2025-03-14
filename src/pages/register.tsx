@@ -17,17 +17,10 @@ import { useAuth } from "../utils/auth";
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
-    fullName: "",
-    gender: "",
-    birthDate: "",
-    height: "",
-    weight: "",
-    medicalHistory: "",
   });
 
   const [emailError, setEmailError] = useState("");
@@ -293,69 +286,66 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (step === 1) {
-      const isEmailValid = await validateEmail();
-      const isPasswordValid = validatePassword();
+    const isEmailValid = await validateEmail();
+    const isPasswordValid = validatePassword();
 
-      // Make sure the email is verified before allowing registration
-      if (
-        isEmailValid &&
-        isPasswordValid &&
-        verificationSuccess &&
-        emailVerified
-      ) {
-        setIsLoading(true);
+    // Make sure the email is verified before allowing registration
+    if (
+      isEmailValid &&
+      isPasswordValid &&
+      verificationSuccess &&
+      emailVerified
+    ) {
+      setIsLoading(true);
 
-        try {
-          const response = await authService.register(
-            formData.email,
-            formData.password
-          );
+      try {
+        const response = await authService.register(
+          formData.email,
+          formData.password
+        );
 
-          if (response.status === "success") {
-            setSuccessMessage("Registration successful!");
-            setShowAlert(true);
+        if (response.status === "success") {
+          setSuccessMessage("Registration successful!");
+          setShowAlert(true);
 
-            // After successful registration, log in the user
-            try {
-              const loginResponse = await login(
-                formData.email,
-                formData.password
-              );
+          // After successful registration, log in the user
+          try {
+            const loginResponse = await login(
+              formData.email,
+              formData.password
+            );
 
-              if (loginResponse.status === "success") {
-                setStep(2);
-              } else {
-                // If login fails, still proceed to step 2, but won't be logged in
-                setStep(2);
-              }
-            } catch (loginErr) {
-              console.error("Auto-login after registration failed:", loginErr);
-              // Still proceed to step 2 even if login fails
-              setStep(2);
+            if (loginResponse.status === "success") {
+              // Navigate to complete profile page
+              setTimeout(() => {
+                navigate("/complete-profile");
+              }, 1500);
+            } else {
+              // If login fails, still redirect to complete profile
+              setTimeout(() => {
+                navigate("/complete-profile");
+              }, 1500);
             }
-          } else {
-            setEmailError(response.message || "Registration failed");
+          } catch (loginErr) {
+            console.error("Auto-login after registration failed:", loginErr);
+            // Still redirect to complete profile even if login fails
+            setTimeout(() => {
+              navigate("/complete-profile");
+            }, 1500);
           }
-        } catch (err: any) {
-          console.error("Registration error:", err);
-          setEmailError(err.response?.data?.message || "Registration failed");
-        } finally {
-          setIsLoading(false);
+        } else {
+          setEmailError(response.message || "Registration failed");
         }
-      } else if (verificationSuccess && !emailVerified) {
-        // If email is not verified yet
-        setEmailError("Please verify your email before registering");
-        setShowAlert(true);
+      } catch (err: any) {
+        console.error("Registration error:", err);
+        setEmailError(err.response?.data?.message || "Registration failed");
+      } finally {
+        setIsLoading(false);
       }
-    } else {
-      // In a real application, you would save the additional user data here
-      setSuccessMessage("Profile information saved successfully!");
+    } else if (verificationSuccess && !emailVerified) {
+      // If email is not verified yet
+      setEmailError("Please verify your email before registering");
       setShowAlert(true);
-      // Navigate to dashboard after a short delay
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
     }
   };
 
@@ -400,357 +390,242 @@ const Register = () => {
         </Link>
 
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mt-4">
-          {step === 1 ? "Create Your Account" : "Personal Information"}
+          Create Your Account
         </h2>
 
         <form onSubmit={handleSubmit}>
-          {step === 1 ? (
-            <div className="mt-6 space-y-4">
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="email"
-                >
-                  Email Address
-                </label>
-                <div className="flex gap-2">
-                  <div className="flex-grow">
-                    <Input
-                      className={`w-full ${emailError ? "border-red-500" : ""}`}
-                      id="email"
-                      name="email"
-                      placeholder="Enter your email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <Button
-                    className="h-[40px] whitespace-nowrap font-medium"
-                    color="primary"
-                    disabled={verifying || !formData.email}
-                    size="sm"
-                    type="button"
-                    onClick={validateEmail}
-                  >
-                    {verifying
-                      ? "Verifying..."
-                      : verificationSuccess
-                        ? emailVerified
-                          ? "Verified"
-                          : "Sent"
-                        : "Verify Email"}
-                  </Button>
+          <div className="mt-6 space-y-4">
+            <div className="text-left">
+              <label
+                className="text-gray-600 text-sm block mb-1"
+                htmlFor="email"
+              >
+                Email Address
+              </label>
+              <div className="flex gap-2">
+                <div className="flex-grow">
+                  <Input
+                    className={`w-full ${emailError ? "border-red-500" : ""}`}
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
                 </div>
-
-                {/* Show verification status and instructions */}
-                {emailError && (
-                  <Alert
-                    className="mt-1"
-                    color="danger"
-                    description={emailError}
-                    hideIcon={false}
-                    variant="faded"
-                  />
-                )}
-
-                {verificationSuccess && !emailVerified && (
-                  <div className="mt-2">
-                    <Alert
-                      className="mb-2"
-                      color="warning"
-                      description={
-                        <>
-                          <p>
-                            A verification link has been sent to your email.
-                          </p>
-                          <p className="mt-1">
-                            Please check your inbox and click the link to verify
-                            your email address.
-                          </p>
-                          {checkingStatus && (
-                            <p className="mt-1 text-xs italic">
-                              Checking verification status...
-                            </p>
-                          )}
-                        </>
-                      }
-                      hideIcon={false}
-                      variant="faded"
-                    />
-
-                    <p className="text-xs text-gray-500 mt-1">
-                      Didn&apos;t receive the email? Check your spam folder or
-                      try again.
-                    </p>
-
-                    {manualVerificationOption && (
-                      <div className="mt-3 p-3 border border-blue-200 rounded-md bg-blue-50">
-                        <p className="text-sm font-medium text-blue-700 mb-2">
-                          Having trouble with automatic verification?
-                        </p>
-                        <p className="text-xs text-blue-600 mb-2">
-                          If you&apos;ve already clicked the verification link
-                          in your email but the system isn&apos;t recognizing
-                          it, you can continue manually:
-                        </p>
-                        <Button
-                          className="w-full"
-                          color="primary"
-                          size="sm"
-                          onClick={confirmManualVerification}
-                        >
-                          I&apos;ve Verified My Email
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {emailVerified && (
-                  <Alert
-                    className="mt-1"
-                    color="success"
-                    description="Email verified successfully! You can now set your password."
-                    hideIcon={false}
-                    variant="faded"
-                  />
-                )}
+                <Button
+                  className="h-[40px] whitespace-nowrap font-medium"
+                  color="primary"
+                  disabled={verifying || !formData.email}
+                  size="sm"
+                  type="button"
+                  onClick={validateEmail}
+                >
+                  {verifying
+                    ? "Verifying..."
+                    : verificationSuccess
+                      ? emailVerified
+                        ? "Verified"
+                        : "Sent"
+                      : "Verify Email"}
+                </Button>
               </div>
 
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <Input
-                  className={`w-full ${passwordError ? "border-red-500" : ""}`}
-                  disabled={!emailVerified}
-                  endContent={
-                    <button
-                      className={`text-gray-500 ${!emailVerified ? "opacity-50 cursor-not-allowed" : "hover:text-gray-700"}`}
-                      disabled={!emailVerified}
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <AiOutlineEyeInvisible />
-                      ) : (
-                        <AiOutlineEye />
-                      )}
-                    </button>
-                  }
-                  id="password"
-                  name="password"
-                  placeholder={
-                    emailVerified ? "Enter your password" : "Verify email first"
-                  }
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleChange}
+              {/* Show verification status and instructions */}
+              {emailError && (
+                <Alert
+                  className="mt-1"
+                  color="danger"
+                  description={emailError}
+                  hideIcon={false}
+                  variant="faded"
                 />
-                {!emailVerified && !emailError && (
-                  <p className="text-amber-600 text-xs mt-1">
-                    Please verify your email before setting a password
+              )}
+
+              {verificationSuccess && !emailVerified && (
+                <div className="mt-2">
+                  <Alert
+                    className="mb-2"
+                    color="warning"
+                    description={
+                      <>
+                        <p>A verification link has been sent to your email.</p>
+                        <p className="mt-1">
+                          Please check your inbox and click the link to verify
+                          your email address.
+                        </p>
+                        {checkingStatus && (
+                          <p className="mt-1 text-xs italic">
+                            Checking verification status...
+                          </p>
+                        )}
+                      </>
+                    }
+                    hideIcon={false}
+                    variant="faded"
+                  />
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    Didn&apos;t receive the email? Check your spam folder or try
+                    again.
                   </p>
-                )}
-              </div>
 
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="confirmPassword"
-                >
-                  Confirm Password
-                </label>
-                <Input
-                  className={`w-full ${passwordError ? "border-red-500" : ""}`}
-                  disabled={!emailVerified}
-                  endContent={
-                    <button
-                      className={`text-gray-500 ${!emailVerified ? "opacity-50 cursor-not-allowed" : "hover:text-gray-700"}`}
-                      disabled={!emailVerified}
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <AiOutlineEyeInvisible />
-                      ) : (
-                        <AiOutlineEye />
-                      )}
-                    </button>
-                  }
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder={
-                    emailVerified
-                      ? "Confirm your password"
-                      : "Verify email first"
-                  }
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-                {passwordError && (
-                  <Alert
-                    className="mt-1"
-                    color="danger"
-                    description={passwordError}
-                    hideIcon={false}
-                    variant="faded"
-                  />
-                )}
-              </div>
-
-              <Button
-                className="w-full"
-                color="primary"
-                disabled={isLoading || !emailVerified}
-                type="submit"
-              >
-                {isLoading ? "Registering..." : "Register"}
-              </Button>
-
-              <div className="flex items-center my-4">
-                <hr className="flex-grow border-gray-300" />
-                <span className="mx-4 text-gray-500 text-sm">
-                  Or sign up with
-                </span>
-                <hr className="flex-grow border-gray-300" />
-              </div>
-
-              <Button
-                className="w-full"
-                startContent={<FcGoogle className="text-xl" />}
-                type="button"
-                variant="bordered"
-                onClick={handleGoogleSignup}
-              >
-                Google Account
-              </Button>
-
-              <div className="mt-5 text-gray-600 text-sm">
-                Already have an account?{" "}
-                <Link
-                  className="text-primary text-sm font-semibold hover:underline"
-                  to="/login"
-                >
-                  Log in
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="fullName"
-                >
-                  Full Name
-                </label>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  placeholder="Enter your full name"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="gender"
-                >
-                  Gender
-                </label>
-                <select
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="birthDate"
-                >
-                  Birthdate
-                </label>
-                <Input
-                  id="birthDate"
-                  name="birthDate"
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex space-x-4">
-                <div className="w-1/2 text-left">
-                  <label
-                    className="text-gray-600 text-sm block mb-1"
-                    htmlFor="height"
-                  >
-                    Height (cm)
-                  </label>
-                  <Input
-                    id="height"
-                    name="height"
-                    placeholder="Height"
-                    type="number"
-                    value={formData.height}
-                    onChange={handleChange}
-                  />
+                  {manualVerificationOption && (
+                    <div className="mt-3 p-3 border border-blue-200 rounded-md bg-blue-50">
+                      <p className="text-sm font-medium text-blue-700 mb-2">
+                        Having trouble with automatic verification?
+                      </p>
+                      <p className="text-xs text-blue-600 mb-2">
+                        If you&apos;ve already clicked the verification link in
+                        your email but the system isn&apos;t recognizing it, you
+                        can continue manually:
+                      </p>
+                      <Button
+                        className="w-full"
+                        color="primary"
+                        size="sm"
+                        onClick={confirmManualVerification}
+                      >
+                        I&apos;ve Verified My Email
+                      </Button>
+                    </div>
+                  )}
                 </div>
-                <div className="w-1/2 text-left">
-                  <label
-                    className="text-gray-600 text-sm block mb-1"
-                    htmlFor="weight"
-                  >
-                    Weight (kg)
-                  </label>
-                  <Input
-                    id="weight"
-                    name="weight"
-                    placeholder="Weight"
-                    type="number"
-                    value={formData.weight}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="text-left">
-                <label
-                  className="text-gray-600 text-sm block mb-1"
-                  htmlFor="medicalHistory"
-                >
-                  Medical History
-                </label>
-                <Input
-                  id="medicalHistory"
-                  name="medicalHistory"
-                  placeholder="Enter any relevant medical history"
-                  type="text"
-                  value={formData.medicalHistory}
-                  onChange={handleChange}
-                />
-              </div>
+              )}
 
-              <Button className="w-full" color="primary" type="submit">
-                Complete Registration
-              </Button>
+              {emailVerified && (
+                <Alert
+                  className="mt-1"
+                  color="success"
+                  description="Email verified successfully! You can now set your password."
+                  hideIcon={false}
+                  variant="faded"
+                />
+              )}
             </div>
-          )}
+
+            <div className="text-left">
+              <label
+                className="text-gray-600 text-sm block mb-1"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <Input
+                className={`w-full ${passwordError ? "border-red-500" : ""}`}
+                disabled={!emailVerified}
+                endContent={
+                  <button
+                    className={`text-gray-500 ${!emailVerified ? "opacity-50 cursor-not-allowed" : "hover:text-gray-700"}`}
+                    disabled={!emailVerified}
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                }
+                id="password"
+                name="password"
+                placeholder={
+                  emailVerified ? "Enter your password" : "Verify email first"
+                }
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {!emailVerified && !emailError && (
+                <p className="text-amber-600 text-xs mt-1">
+                  Please verify your email before setting a password
+                </p>
+              )}
+            </div>
+
+            <div className="text-left">
+              <label
+                className="text-gray-600 text-sm block mb-1"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
+              </label>
+              <Input
+                className={`w-full ${passwordError ? "border-red-500" : ""}`}
+                disabled={!emailVerified}
+                endContent={
+                  <button
+                    className={`text-gray-500 ${!emailVerified ? "opacity-50 cursor-not-allowed" : "hover:text-gray-700"}`}
+                    disabled={!emailVerified}
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                }
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder={
+                  emailVerified ? "Confirm your password" : "Verify email first"
+                }
+                type={showConfirmPassword ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+              {passwordError && (
+                <Alert
+                  className="mt-1"
+                  color="danger"
+                  description={passwordError}
+                  hideIcon={false}
+                  variant="faded"
+                />
+              )}
+            </div>
+
+            <Button
+              className="w-full"
+              color="primary"
+              disabled={isLoading || !emailVerified}
+              type="submit"
+            >
+              {isLoading ? "Registering..." : "Register"}
+            </Button>
+
+            <div className="flex items-center my-4">
+              <hr className="flex-grow border-gray-300" />
+              <span className="mx-4 text-gray-500 text-sm">
+                Or sign up with
+              </span>
+              <hr className="flex-grow border-gray-300" />
+            </div>
+
+            <Button
+              className="w-full"
+              startContent={<FcGoogle className="text-xl" />}
+              type="button"
+              variant="bordered"
+              onClick={handleGoogleSignup}
+            >
+              Google Account
+            </Button>
+
+            <div className="mt-5 text-gray-600 text-sm">
+              Already have an account?{" "}
+              <Link
+                className="text-primary text-sm font-semibold hover:underline"
+                to="/login"
+              >
+                Log in
+              </Link>
+            </div>
+          </div>
         </form>
       </div>
     </div>

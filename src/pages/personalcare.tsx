@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Sidebar from "@/components/sidebar"; 
 import Card from "@/components/ui/card";
 import Button from "@/components/ui/button";
 import Dialog from "@/components/ui/dialog";
@@ -14,6 +13,7 @@ import SkinTempImg from "@/assets/skin_temp.png";
 import BreathingImg from "@/assets/breathing.png";
 import MotionPostureImg from "@/assets/motion_posture.png";
 import SleepImg from "@/assets/sleep.png";
+import AppLayout from "@/components/AppLayout";
 
 const healthMetrics = {
   Heart: { image: HeartImg, measurement: "Heart rate: 72 bpm" },
@@ -48,9 +48,10 @@ const PersonalCare: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-blue-100">
-      <Sidebar />
-      
+    <AppLayout>
+      <h1 className="text-2xl font-bold text-gray-900 my-6">
+          Personal Care
+        </h1>
       <div className="flex-1 p-6 grid grid-cols-2 gap-4">
         {Object.entries(healthMetrics).map(([key, { image, measurement }]) => (
           <motion.div
@@ -72,7 +73,7 @@ const PersonalCare: React.FC = () => {
         ))}
 
         <Dialog isOpen={!!selectedMetric} onClose={() => setSelectedMetric(null)}>
-          <div className="w-[80vw] max-w-4xl bg-white p-6 rounded-xl shadow-xl">
+          <div className="w-[80vw] max-w-3xl bg-white p-6 rounded-xl shadow-xl">
             <h2 className="text-2xl font-bold text-center">{selectedMetric}</h2>
             <p className="text-center text-gray-700 mb-4">{healthMetrics[selectedMetric as keyof typeof healthMetrics]?.measurement}</p>
 
@@ -111,7 +112,7 @@ const PersonalCare: React.FC = () => {
           </div>
         </Dialog>
       </div>
-    </div>
+    </AppLayout>
   );
 };
 

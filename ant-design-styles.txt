@@ -1,0 +1,122 @@
+159:/* Dashboard Styles */
+160-.dashboard-tabs .ant-tabs-nav {
+161-  margin-bottom: 24px;
+162-}
+163-
+164-.dashboard-tabs .ant-tabs-tab {
+165-  padding: 12px 16px;
+166-  transition: all 0.3s;
+167-}
+168-
+169-.dashboard-tabs .ant-tabs-tab:hover {
+170-  color: #1890ff;
+171-}
+172-
+173-.dashboard-tabs .ant-tabs-tab-active {
+174-  font-weight: 600;
+175-}
+176-
+177-.dashboard-tabs .ant-tabs-content {
+178-  background-color: transparent;
+179-  border-radius: 8px;
+180-}
+181-
+182-/* Card animations */
+183-.card-container {
+184-  transition: transform 0.3s ease;
+185-}
+186-
+187-.card-container:hover {
+188-  transform: translateY(-5px);
+189-}
+190-
+191-/* Chart tooltips */
+192-.recharts-tooltip-wrapper {
+193-  z-index: 1000;
+194-}
+195-
+196-/* Health metric tags animation */
+197-.health-metric-tag {
+198-  transition: all 0.3s ease;
+199-}
+200-
+201-.health-metric-tag:hover {
+202-  transform: scale(1.1);
+203-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+204-}
+205-
+206-/* Progress animations */
+207-.ant-progress-circle-path {
+208-  transition: stroke-dashoffset 0.8s ease;
+209-}
+210-
+211-/* Responsive adjustments */
+212-@media (max-width: 768px) {
+213-  .dashboard-grid {
+214-    grid-template-columns: 1fr;
+215-  }
+216-
+217-  .health-anatomy-container {
+218-    margin-top: 24px;
+219-  }
+220-}
+221-
+222-/* Search bar styling */
+223-.ant-input-affix-wrapper {
+224-  border-radius: 8px;
+225-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+226-  transition: all 0.3s;
+227-}
+228-
+229-.ant-input-affix-wrapper:hover {
+230-  border-color: #40a9ff;
+231-}
+232-
+233-.ant-input-affix-wrapper-focused {
+234-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+235-}
+236-
+237-/* Badge styling */
+238-.ant-badge .ant-badge-count {
+239-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+240-}
+241-
+242-/* Notification popover */
+243-.notification-popover .ant-popover-inner {
+244-  border-radius: 8px;
+245-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+246-}
+247-
+248-.notification-popover .ant-list-item {
+249-  padding: 10px 16px;
+250-  border-radius: 4px;
+251-  margin-bottom: 4px;
+252-  transition: background-color 0.2s ease;
+253-}
+254-
+255-.notification-popover .ant-list-item:hover {
+256-  background-color: #f5f5f5;
+257-}
+258-
+259-/* Avatar styling */
+260-.ant-avatar {
+261-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+262-}
+263-
+264-/* Dropdown menu styling */
+265-.ant-dropdown-menu {
+266-  border-radius: 8px;
+267-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+268-}
+269-
+270-.ant-dropdown-menu-item {
+271-  transition: all 0.2s;
+272-}
+273-
+274-.ant-dropdown-menu-item:hover {
+275-  background-color: #f0f7ff;
+276-}
+277-
+278-.ant-dropdown-menu-item-divider {
+279-  margin: 4px 0;
+280-}

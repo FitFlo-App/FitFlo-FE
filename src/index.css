@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --transparent: transparent;
-    --white: #FFFFFF;
+    --white: #ffffff;
     --black: #000000;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -64,56 +64,86 @@
 @layer components {
   @keyframes aurora {
     from {
-      background-position: 50% 50%, 50% 50%;
+      background-position:
+        50% 50%,
+        50% 50%;
     }
     to {
-      background-position: 350% 50%, 350% 50%;
+      background-position:
+        350% 50%,
+        350% 50%;
     }
   }
 
   .animate-aurora {
     animation: aurora 60s linear infinite;
   }
-  
+
   @keyframes blob-slow {
-    0% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, 30px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0, 0) scale(1); }
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(30px, 30px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
   }
-  
+
   @keyframes blob-medium {
-    0% { transform: translate(0, 0) scale(0.9); }
-    33% { transform: translate(-30px, -20px) scale(1.1); }
-    66% { transform: translate(20px, -30px) scale(1); }
-    100% { transform: translate(0, 0) scale(0.9); }
+    0% {
+      transform: translate(0, 0) scale(0.9);
+    }
+    33% {
+      transform: translate(-30px, -20px) scale(1.1);
+    }
+    66% {
+      transform: translate(20px, -30px) scale(1);
+    }
+    100% {
+      transform: translate(0, 0) scale(0.9);
+    }
   }
-  
+
   @keyframes blob-fast {
-    0% { transform: translate(0, 0) scale(1.1); }
-    33% { transform: translate(20px, -20px) scale(0.8); }
-    66% { transform: translate(-30px, -10px) scale(1.2); }
-    100% { transform: translate(0, 0) scale(1.1); }
+    0% {
+      transform: translate(0, 0) scale(1.1);
+    }
+    33% {
+      transform: translate(20px, -20px) scale(0.8);
+    }
+    66% {
+      transform: translate(-30px, -10px) scale(1.2);
+    }
+    100% {
+      transform: translate(0, 0) scale(1.1);
+    }
   }
-  
+
   .animate-blob-slow {
     animation: blob-slow 20s ease-in-out infinite alternate;
   }
-  
+
   .animate-blob-medium {
     animation: blob-medium 15s ease-in-out infinite alternate;
   }
-  
+
   .animate-blob-fast {
     animation: blob-fast 10s ease-in-out infinite alternate;
   }
-  
+
   .bg-radial-gradient {
-    background: radial-gradient(circle at 100% 0%, rgba(0,0,0,0.2) 0%, transparent 70%);
+    background: radial-gradient(
+      circle at 100% 0%,
+      rgba(0, 0, 0, 0.2) 0%,
+      transparent 70%
+    );
   }
 }
-
-
 
 @layer base {
   * {
@@ -122,4 +152,127 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Dashboard Styles */
+.dashboard-tabs .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+.dashboard-tabs .ant-tabs-tab {
+  padding: 12px 16px;
+  transition: all 0.3s;
+}
+
+.dashboard-tabs .ant-tabs-tab:hover {
+  color: #1890ff;
+}
+
+.dashboard-tabs .ant-tabs-tab-active {
+  font-weight: 600;
+}
+
+.dashboard-tabs .ant-tabs-content {
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+/* Card animations */
+.card-container {
+  transition: transform 0.3s ease;
+}
+
+.card-container:hover {
+  transform: translateY(-5px);
+}
+
+/* Chart tooltips */
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+/* Health metric tags animation */
+.health-metric-tag {
+  transition: all 0.3s ease;
+}
+
+.health-metric-tag:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress animations */
+.ant-progress-circle-path {
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .health-anatomy-container {
+    margin-top: 24px;
+  }
+}
+
+/* Search bar styling */
+.ant-input-affix-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: #40a9ff;
+}
+
+.ant-input-affix-wrapper-focused {
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Badge styling */
+.ant-badge .ant-badge-count {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Notification popover */
+.notification-popover .ant-popover-inner {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notification-popover .ant-list-item {
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.notification-popover .ant-list-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Avatar styling */
+.ant-avatar {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Dropdown menu styling */
+.ant-dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ant-dropdown-menu-item {
+  transition: all 0.2s;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #f0f7ff;
+}
+
+.ant-dropdown-menu-item-divider {
+  margin: 4px 0;
 }

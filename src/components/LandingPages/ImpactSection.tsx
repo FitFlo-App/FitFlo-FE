@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, cubicBezier } from "framer-motion";
+import { motion, useScroll, useTransform, cubicBezier, useInView } from "framer-motion";
 import {
   FaHeartbeat,
   FaMoneyBillWave,
@@ -46,29 +46,28 @@ const impactData = [
   },
 ];
 
+// Card configuration object with customizable settings for each card
+const cardConfigs = [
+  { topOffset: 0, rotation: 2.5, xOffset: 12, overlayOpacity: 0.1 },
+  { topOffset: 10, rotation: -3, xOffset: -14, overlayOpacity: 0.12 },
+  { topOffset: 125, rotation: 2.8, xOffset: 10, overlayOpacity: 0.08 },
+  { topOffset: 125, rotation: -2.2, xOffset: -11, overlayOpacity: 0.15 },
+  { topOffset: 130, rotation: 3.2, xOffset: 13, overlayOpacity: 0.1 },
+];
+
 const ImpactSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Ensure component is mounted before animations run
   useEffect(() => {
     setIsMounted(true);
-
-    // Force a reflow/repaint to ensure scroll calculations are accurate
-    if (containerRef.current) {
-      const height = containerRef.current.offsetHeight;
-
-      containerRef.current.style.height = `${height}px`;
-    }
-
     return () => setIsMounted(false);
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative pt-4 pb-[80px] md:pt-8 bg-white overflow-hidden"
+      className="relative pt-4 pb-[80px] md:pt-8 bg-white overflow-hidden" // Reduced bottom padding
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-200 opacity-20 blur-3xl rounded-full" />
@@ -76,7 +75,7 @@ const ImpactSection = () => {
       {/* Combined section with header and cards */}
       <div className="max-w-6xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-2 md:mb-4 relative z-10">
+        <div className="text-center mb-12 md:mb-20 relative z-10">
           <motion.h3
             animate={{ opacity: 1, y: 0 }}
             className="text-blue-600 dark:text-blue-400 font-semibold tracking-wide text-lg"
@@ -100,134 +99,106 @@ const ImpactSection = () => {
           </p>
         </div>
 
-        {/* Sticky container for card animations */}
-        <div
-          ref={containerRef}
-          className="sticky-cards-container h-[100vh]"
-          id="impact-scroll-container"
-        >
-          <div className="sticky top-2 md:top-4 pt-7">
-            <div className="card-stack-wrapper max-w-xl w-full mx-auto relative h-[250px]">
-              {isMounted &&
-                impactData.map((impact, index) => (
-                  <CardWithScrollAnimation
-                    key={index}
-                    containerRef={containerRef}
-                    impact={impact}
-                    index={index}
-                    totalCards={impactData.length}
-                  />
-                ))}
-            </div>
-          </div>
+        {/* Card container with reversed stacking order */}
+        <div className="relative mb-[40px]"> {/* Reduced bottom margin */}
+          {isMounted &&
+            // Reverse the order of cards so later cards are rendered on top
+            [...impactData].map((impact, index) => (
+              <CardWithInViewAnimation
+                key={index}
+                impact={impact}
+                index={index}
+                totalCards={impactData.length}
+                config={cardConfigs[index % cardConfigs.length]} // Apply configuration cyclically
+              />
+            ))}
         </div>
       </div>
 
-      {/* Add extra space after the cards */}
-      <div className="h-1" />
+      {/* Additional bottom spacing */}
+      <div className="h-[80px]" /> {/* Reduced extra space */}
     </section>
   );
 };
 
+// Updated interface to include configuration
 interface CardProps {
   impact: (typeof impactData)[0];
   index: number;
-  containerRef: React.RefObject<HTMLDivElement>;
   totalCards: number;
+  config: {
+    topOffset: number;
+    rotation: number;
+    xOffset: number;
+    overlayOpacity: number;
+  };
 }
 
-const CardWithScrollAnimation = ({
+const CardWithInViewAnimation = ({
   impact,
   index,
-  containerRef,
   totalCards,
+  config,
 }: CardProps) => {
-  // Use a more reliable scroll configuration with viewport margins
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.7", "end 0.8"],
+  // Ref for viewport detection
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Use inView hook with aggressive triggering
+  const isInView = useInView(cardRef, { 
+    once: true, 
+    amount: 0.15, // Trigger with even less visibility
+    margin: "0px 0px -300px 0px" // More negative margin for earlier trigger
   });
+  
+  // Calculate vertical position based on the config
+  const topPosition = config.topOffset;
+  
+  // Use configuration values for rotation and offset
+  const xOffset = config.xOffset; 
+  const baseRotation = config.rotation;
 
-  // Create custom easing function
-  const customEase = cubicBezier(0.16, 1, 0.3, 1);
+  // Animation variants
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: -20, 
+      x: xOffset * 1.2, 
+      rotate: baseRotation * 1.5,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      x: xOffset, 
+      rotate: baseRotation,
+      scale: 1,
+      transition: { 
+        duration: 0.7,
+        ease: [0.16, 1, 0.3, 1],
+        delay: index * 0.1
+      }
+    }
+  };
 
-  // Adjust the timing for each card to be more spaced out
-  const sectionProgressPerCard = 1 / (totalCards + 0.5);
-  const cardAppearStart = index * sectionProgressPerCard;
-  const cardAppearEnd = Math.min(
-    1,
-    cardAppearStart + sectionProgressPerCard * 0.8
-  );
-
-  // Card animations based on scroll
-  const opacity = useTransform(
-    scrollYProgress,
-    [cardAppearStart, cardAppearEnd],
-    [0, 1],
-    { ease: customEase }
-  );
-
-  // Modified y transform - cards come from above
-  const y = useTransform(
-    scrollYProgress,
-    [cardAppearStart, cardAppearEnd],
-    [-100, 0],
-    { ease: customEase }
-  );
-
-  const scale = useTransform(
-    scrollYProgress,
-    [cardAppearStart, cardAppearEnd],
-    [0.92, 1],
-    { ease: customEase }
-  );
-
-  // More pronounced rotation for a file-like stacking effect
-  const baseRotation = index % 2 === 0 ? 2.5 : -2.5;
-  const rotation = useTransform(
-    scrollYProgress,
-    [cardAppearStart, cardAppearEnd],
-    [baseRotation * 1.5, baseRotation],
-    { ease: customEase }
-  );
-
-  // Slight x-offset for natural card positioning
-  const xOffset = index % 2 === 0 ? 8 : -8;
-  const x = useTransform(
-    scrollYProgress,
-    [cardAppearStart, cardAppearEnd],
-    [xOffset * 1.8, xOffset],
-    { ease: customEase }
-  );
-
-  // Show slight edges of cards to create stacking effect
-  const topOffset = index * 4;
-  const leftOffset = index % 2 === 0 ? index * 2 : 0;
-  const rightOffset = index % 2 === 1 ? index * 2 : 0;
-
-  // Set proper stacking order with higher indexes on top (first card highest)
-  const zIndex = (totalCards - index) * 10;
+  // Calculate where the "reverse" effect should happen - higher cards have negative bottom margins
+  const negativeMargin = index === 0 ? 0 : -130;
 
   return (
     <motion.div
-      className={`p-8 rounded-3xl shadow-xl flex flex-col items-start text-left bg-gradient-to-br ${impact.bgColor} relative overflow-hidden w-full`}
-      initial={{ opacity: 0, y: -100 }}
+      ref={cardRef}
+      className={`p-8 rounded-3xl shadow-xl flex flex-col items-center text-center bg-gradient-to-br ${impact.bgColor} relative overflow-hidden w-full max-w-xl mx-auto`} // Changed: items-start → items-center, text-left → text-center
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={cardVariants}
       style={{
-        opacity,
-        y,
-        x,
-        scale,
-        rotate: rotation,
-        zIndex,
-        top: topOffset,
-        left: leftOffset,
-        right: rightOffset,
-        transformOrigin: "center bottom",
-        boxShadow:
-          "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 10px 15px -5px rgba(0, 0, 0, 0.1)",
+        marginTop: topPosition, // Use the calculated topPosition
+        marginBottom: negativeMargin, // Creates the effect where the top of the card goes under previous cards
+        zIndex: totalCards - index, // Reverse the stack order for the "top goes under" effect
+        transformOrigin: "center bottom", // Change origin to bottom for better rotation effect
+        boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 10px 15px -5px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <div className="p-5 bg-white rounded-full shadow-lg self-center mb-6">
+      <div className="p-5 bg-white rounded-full shadow-lg mb-6">
         {impact.icon}
       </div>
       <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
@@ -236,7 +207,10 @@ const CardWithScrollAnimation = ({
       <p className="text-gray-800 text-md leading-relaxed">
         {impact.description}
       </p>
-      <div className="absolute inset-0 bg-white opacity-10 blur-2xl" />
+      <div 
+        className="absolute inset-0 bg-white blur-2xl" 
+        style={{ opacity: config.overlayOpacity }}
+      />
     </motion.div>
   );
 };

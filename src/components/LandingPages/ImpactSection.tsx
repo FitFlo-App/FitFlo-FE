@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, cubicBezier, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   FaHeartbeat,
   FaMoneyBillWave,
@@ -61,6 +61,7 @@ const ImpactSection = () => {
 
   useEffect(() => {
     setIsMounted(true);
+
     return () => setIsMounted(false);
   }, []);
 
@@ -71,7 +72,6 @@ const ImpactSection = () => {
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-200 opacity-20 blur-3xl rounded-full" />
-
       {/* Combined section with header and cards */}
       <div className="max-w-6xl mx-auto px-6">
         {/* Section header */}
@@ -100,21 +100,22 @@ const ImpactSection = () => {
         </div>
 
         {/* Card container with reversed stacking order */}
-        <div className="relative mb-[40px]"> {/* Reduced bottom margin */}
+        <div className="relative mb-[40px]">
+          {" "}
+          {/* Reduced bottom margin */}
           {isMounted &&
             // Reverse the order of cards so later cards are rendered on top
             [...impactData].map((impact, index) => (
               <CardWithInViewAnimation
                 key={index}
+                config={cardConfigs[index % cardConfigs.length]} // Apply configuration cyclically
                 impact={impact}
                 index={index}
                 totalCards={impactData.length}
-                config={cardConfigs[index % cardConfigs.length]} // Apply configuration cyclically
               />
             ))}
         </div>
       </div>
-
       {/* Additional bottom spacing */}
       <div className="h-[80px]" /> {/* Reduced extra space */}
     </section>
@@ -142,42 +143,42 @@ const CardWithInViewAnimation = ({
 }: CardProps) => {
   // Ref for viewport detection
   const cardRef = useRef<HTMLDivElement>(null);
-  
+
   // Use inView hook with aggressive triggering
-  const isInView = useInView(cardRef, { 
-    once: true, 
+  const isInView = useInView(cardRef, {
+    once: true,
     amount: 0.15, // Trigger with even less visibility
-    margin: "0px 0px -300px 0px" // More negative margin for earlier trigger
+    margin: "0px 0px -300px 0px", // More negative margin for earlier trigger
   });
-  
+
   // Calculate vertical position based on the config
   const topPosition = config.topOffset;
-  
+
   // Use configuration values for rotation and offset
-  const xOffset = config.xOffset; 
+  const xOffset = config.xOffset;
   const baseRotation = config.rotation;
 
   // Animation variants
   const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: -20, 
-      x: xOffset * 1.2, 
+    hidden: {
+      opacity: 0,
+      y: -20,
+      x: xOffset * 1.2,
       rotate: baseRotation * 1.5,
-      scale: 0.95
+      scale: 0.95,
     },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      x: xOffset, 
+    visible: {
+      opacity: 1,
+      y: 0,
+      x: xOffset,
       rotate: baseRotation,
       scale: 1,
-      transition: { 
+      transition: {
         duration: 0.7,
         ease: [0.16, 1, 0.3, 1],
-        delay: index * 0.1
-      }
-    }
+        delay: index * 0.1,
+      },
+    },
   };
 
   // Calculate where the "reverse" effect should happen - higher cards have negative bottom margins
@@ -186,17 +187,18 @@ const CardWithInViewAnimation = ({
   return (
     <motion.div
       ref={cardRef}
+      animate={isInView ? "visible" : "hidden"}
       className={`p-8 rounded-3xl shadow-xl flex flex-col items-center text-center bg-gradient-to-br ${impact.bgColor} relative overflow-hidden w-full max-w-xl mx-auto`} // Changed: items-start → items-center, text-left → text-center
       initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={cardVariants}
       style={{
         marginTop: topPosition, // Use the calculated topPosition
         marginBottom: negativeMargin, // Creates the effect where the top of the card goes under previous cards
         zIndex: totalCards - index, // Reverse the stack order for the "top goes under" effect
         transformOrigin: "center bottom", // Change origin to bottom for better rotation effect
-        boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 10px 15px -5px rgba(0, 0, 0, 0.1)",
+        boxShadow:
+          "0 15px 30px -10px rgba(0, 0, 0, 0.2), 0 10px 15px -5px rgba(0, 0, 0, 0.1)",
       }}
+      variants={cardVariants}
     >
       <div className="p-5 bg-white rounded-full shadow-lg mb-6">
         {impact.icon}
@@ -207,8 +209,8 @@ const CardWithInViewAnimation = ({
       <p className="text-gray-800 text-md leading-relaxed">
         {impact.description}
       </p>
-      <div 
-        className="absolute inset-0 bg-white blur-2xl" 
+      <div
+        className="absolute inset-0 bg-white blur-2xl"
         style={{ opacity: config.overlayOpacity }}
       />
     </motion.div>

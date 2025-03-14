@@ -51,9 +51,11 @@ const ImpactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Ensure component is mounted before animations run
   useEffect(() => {
     setIsMounted(true);
 
+    // Force a reflow/repaint to ensure scroll calculations are accurate
     if (containerRef.current) {
       const height = containerRef.current.offsetHeight;
 
@@ -68,9 +70,12 @@ const ImpactSection = () => {
       ref={sectionRef}
       className="relative pt-4 pb-[80px] md:pt-8 bg-white overflow-hidden"
     >
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-200 opacity-20 blur-3xl rounded-full" />
 
+      {/* Combined section with header and cards */}
       <div className="max-w-6xl mx-auto px-6">
+        {/* Section header */}
         <div className="text-center mb-2 md:mb-4 relative z-10">
           <motion.h3
             animate={{ opacity: 1, y: 0 }}
@@ -95,6 +100,7 @@ const ImpactSection = () => {
           </p>
         </div>
 
+        {/* Sticky container for card animations */}
         <div
           ref={containerRef}
           className="sticky-cards-container h-[100vh]"
@@ -117,6 +123,7 @@ const ImpactSection = () => {
         </div>
       </div>
 
+      {/* Add extra space after the cards */}
       <div className="h-1" />
     </section>
   );
@@ -135,13 +142,16 @@ const CardWithScrollAnimation = ({
   containerRef,
   totalCards,
 }: CardProps) => {
+  // Use a more reliable scroll configuration with viewport margins
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.7", "end 0.8"],
   });
 
+  // Create custom easing function
   const customEase = cubicBezier(0.16, 1, 0.3, 1);
 
+  // Adjust the timing for each card to be more spaced out
   const sectionProgressPerCard = 1 / (totalCards + 0.5);
   const cardAppearStart = index * sectionProgressPerCard;
   const cardAppearEnd = Math.min(
@@ -149,6 +159,7 @@ const CardWithScrollAnimation = ({
     cardAppearStart + sectionProgressPerCard * 0.8
   );
 
+  // Card animations based on scroll
   const opacity = useTransform(
     scrollYProgress,
     [cardAppearStart, cardAppearEnd],
@@ -156,6 +167,7 @@ const CardWithScrollAnimation = ({
     { ease: customEase }
   );
 
+  // Modified y transform - cards come from above
   const y = useTransform(
     scrollYProgress,
     [cardAppearStart, cardAppearEnd],
@@ -170,6 +182,7 @@ const CardWithScrollAnimation = ({
     { ease: customEase }
   );
 
+  // More pronounced rotation for a file-like stacking effect
   const baseRotation = index % 2 === 0 ? 2.5 : -2.5;
   const rotation = useTransform(
     scrollYProgress,
@@ -178,6 +191,7 @@ const CardWithScrollAnimation = ({
     { ease: customEase }
   );
 
+  // Slight x-offset for natural card positioning
   const xOffset = index % 2 === 0 ? 8 : -8;
   const x = useTransform(
     scrollYProgress,
@@ -186,10 +200,12 @@ const CardWithScrollAnimation = ({
     { ease: customEase }
   );
 
+  // Show slight edges of cards to create stacking effect
   const topOffset = index * 4;
   const leftOffset = index % 2 === 0 ? index * 2 : 0;
   const rightOffset = index % 2 === 1 ? index * 2 : 0;
 
+  // Set proper stacking order with higher indexes on top (first card highest)
   const zIndex = (totalCards - index) * 10;
 
   return (

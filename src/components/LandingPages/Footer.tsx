@@ -133,7 +133,7 @@ const Footer = () => {
               </p>
               <p className="text-gray-600 text-right">
                 <LocationIcon className="inline-block h-5 w-5 mr-2" />
-                Jakarta, Indonesia
+                Bandung, Indonesia
               </p>
             </div>
 

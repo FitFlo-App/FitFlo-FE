@@ -3,7 +3,7 @@ import { Card } from "./ui/card";
 import { RobotOutlined, BulbOutlined } from "@ant-design/icons";
 import { List, Typography, Tag, Divider, Button } from "antd";
 
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 interface HealthInsight {
   id: string;

@@ -111,7 +111,7 @@ const RealTimeMonitoring: React.FC<RealTimeMonitoringProps> = ({
 }) => {
   const [heartRateData, setHeartRateData] = useState(generateHeartRateData(30));
   const [stepsData, setStepsData] = useState(generateStepsData(30));
-  const [sleepData, setSleepData] = useState(generateSleepData(30));
+  const [, setSleepData] = useState(generateSleepData(30));
   const [oxygenData, setOxygenData] = useState(generateOxygenData(30));
   const [anomalies, setAnomalies] = useState<string[]>([]);
 

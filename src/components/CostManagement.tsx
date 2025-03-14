@@ -23,9 +23,8 @@ import {
   DownloadOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
-import { Bar } from "recharts";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 interface Expense {
@@ -47,7 +46,6 @@ interface Budget {
 interface CostManagementProps {
   expenses?: Expense[];
   budgets?: Budget[];
-  totalBudget?: number;
 }
 
 // Sample data
@@ -147,9 +145,8 @@ const prepareBarChartData = (budgets: Budget[]) => {
 const CostManagement: React.FC<CostManagementProps> = ({
   expenses = sampleExpenses,
   budgets = sampleBudgets,
-  totalBudget = 3000.0,
 }) => {
-  const [timeframe, setTimeframe] = useState<string>("month");
+  const [, setTimeframe] = useState<string>("month");
 
   const totalSpent = budgets.reduce((total, budget) => total + budget.spent, 0);
   const totalAllocated = budgets.reduce(
@@ -184,8 +181,8 @@ const CostManagement: React.FC<CostManagementProps> = ({
         { text: "Therapy", value: "Therapy" },
         { text: "Specialist", value: "Specialist" },
       ],
-      onFilter: (value: string, record: Expense) =>
-        record.category.indexOf(value) === 0,
+      onFilter: (value: any, record: Expense) =>
+        record.category.indexOf(value as string) === 0,
     },
     {
       title: "Description",

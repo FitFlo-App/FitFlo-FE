@@ -31,7 +31,6 @@ interface ChartProps {
   dataKey?: string;
   nameKey?: string;
   xAxisDataKey?: string;
-  yAxisDataKey?: string;
   showGrid?: boolean;
   showLegend?: boolean;
   showTooltip?: boolean;
@@ -64,7 +63,6 @@ export const Chart: React.FC<ChartProps> = ({
   dataKey = "value",
   nameKey = "name",
   xAxisDataKey = "name",
-  yAxisDataKey = "value",
   showGrid = true,
   showLegend = true,
   showTooltip = true,
@@ -139,7 +137,7 @@ export const Chart: React.FC<ChartProps> = ({
                   `${name}: ${(percent * 100).toFixed(0)}%`
                 }
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={colors[index % colors.length]}
@@ -171,21 +169,20 @@ export const Chart: React.FC<ChartProps> = ({
       case "radialBar":
         return (
           <RadialBarChart
+            width={Number(width)}
+            height={Number(height)}
+            data={data}
             cx="50%"
             cy="50%"
-            innerRadius={20}
-            outerRadius={140}
-            barSize={10}
-            data={data}
+            innerRadius="10%"
+            outerRadius="80%"
           >
             <RadialBar
-              minAngle={15}
               label={{ position: "insideStart", fill: "#fff" }}
               background
-              clockWise
               dataKey={dataKey}
             >
-              {data.map((entry, index) => (
+              {data.map((_, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={colors[index % colors.length]}
@@ -204,7 +201,7 @@ export const Chart: React.FC<ChartProps> = ({
           </RadialBarChart>
         );
       default:
-        return null;
+        return <div>Unsupported chart type: {type}</div>;
     }
   };
 

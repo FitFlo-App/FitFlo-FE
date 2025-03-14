@@ -23,7 +23,7 @@ import {
   FireOutlined,
 } from "@ant-design/icons";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 interface Medication {
   id: string;

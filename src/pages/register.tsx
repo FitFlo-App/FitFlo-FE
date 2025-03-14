@@ -8,7 +8,6 @@ import { Alert } from "@heroui/alert";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import * as Yup from "yup";
-import axios from "axios";
 
 import Logo from "../assets/logoicon.svg";
 import { authService } from "../services/api";

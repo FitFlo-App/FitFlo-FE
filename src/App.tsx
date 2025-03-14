@@ -137,7 +137,7 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
             wrapper: "w-20 h-20",
             label: "text-foreground mt-4",
           }}
-          label="Loading your dashboard..."
+          label="Redirecting..."
           size="lg"
           variant="wave"
         />

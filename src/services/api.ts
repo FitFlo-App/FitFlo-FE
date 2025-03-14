@@ -49,12 +49,24 @@ export const authService = {
   // Register with email and password
   register: async (email: string, password: string) => {
     try {
+      console.log("Making registration API call for:", email);
       const response = await api.post("/user/auth/email/register", {
         email,
         password,
       });
+
+      console.log("Registration API response:", response.data);
+
+      if (response.data.status === "success") {
+        // Store the token in localStorage
+        console.log("Storing token in localStorage:", response.data.data.token);
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("email", response.data.data.email);
+      }
+
       return response.data;
     } catch (error) {
+      console.error("Registration API error:", error);
       throw error;
     }
   },
@@ -62,11 +74,14 @@ export const authService = {
   // Verify email
   verifyEmail: async (email: string) => {
     try {
+      console.log("Verifying email:", email);
       const response = await api.post("/user/auth/email/verify", {
         email,
       });
+      console.log("Verify email response:", response.data);
       return response.data;
     } catch (error) {
+      console.error("Verify email error:", error);
       throw error;
     }
   },

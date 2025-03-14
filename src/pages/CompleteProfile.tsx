@@ -9,6 +9,7 @@ import {
   Form,
   Alert as AntAlert,
 } from "antd";
+import axios from "axios";
 
 import { useAuth } from "../utils/auth";
 
@@ -27,7 +28,7 @@ const textAreaStyle = {
 
 const selectStyle = {
   height: "45px",
-  backgroundColor: "#f5f5f5",
+  width: "100%",
   textAlign: "left" as const,
 };
 
@@ -40,7 +41,30 @@ const datePickerStyle = {
   },
 };
 
+// Add global styles for the Select component
+const globalSelectStyles = `
+  .ant-select .ant-select-selector {
+    background-color: #f5f5f5 !important;
+    height: 45px !important;
+    padding: 0 11px;
+    display: flex;
+    align-items: center;
+  }
+`;
+
 const CompleteProfile = () => {
+  // Add style tag to head
+  useEffect(() => {
+    const styleTag = document.createElement("style");
+
+    styleTag.innerHTML = globalSelectStyles;
+    document.head.appendChild(styleTag);
+
+    return () => {
+      document.head.removeChild(styleTag);
+    };
+  }, []);
+
   const navigate = useNavigate();
   const { user } = useAuth();
   const [form] = Form.useForm();
@@ -63,27 +87,77 @@ const CompleteProfile = () => {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!user) {
+    const token = localStorage.getItem("token");
+
+    if (!user || !token) {
       navigate("/login", { replace: true });
     }
   }, [user, navigate]);
 
   const handleSubmit = async (values: any) => {
     setIsLoading(true);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setErrorMessage("Authentication token not found. Please log in again.");
+      setShowAlert(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+
+      return;
+    }
 
     try {
-      // In a real application, you would save the profile data to the backend here
-      // For example: await api.post('/user/profile', values);
+      // Format the request body according to the API requirements
+      const requestBody = {
+        fullname: values.fullName || "",
+        gender: values.gender || "male",
+        birthDate: values.birthDate
+          ? values.birthDate.format("YYYY-MM-DD")
+          : "",
+        height: values.height ? values.height.toString() : "",
+        weight: values.weight ? values.weight.toString() : "",
+        medicalHistory: values.medicalHistory || "",
+      };
 
-      setSuccessMessage("Profile information saved successfully!");
-      setShowAlert(true);
+      console.log("Sending profile data:", requestBody);
+      console.log("Using token:", token);
 
-      // Navigate to dashboard after a short delay
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
+      // Make the API call to create profile with authorization header
+      const response = await axios.post(
+        "https://api.fitflo.site/user/profile/create",
+        requestBody,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Profile creation response:", response.data);
+
+      if (response.data && response.data.status === "success") {
+        setSuccessMessage("Profile information saved successfully!");
+        setShowAlert(true);
+
+        // Navigate to dashboard after a short delay
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+      } else {
+        throw new Error(
+          response.data?.message || "Failed to save profile information"
+        );
+      }
     } catch (err: any) {
-      setErrorMessage(err.message || "Failed to save profile information");
+      console.error("Error saving profile:", err);
+      setErrorMessage(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to save profile information"
+      );
       setShowAlert(true);
     } finally {
       setIsLoading(false);
@@ -148,6 +222,7 @@ const CompleteProfile = () => {
             rules={[{ required: true, message: "Please select your gender" }]}
           >
             <Select
+              className="ant-select-selector-custom"
               dropdownStyle={{ textAlign: "left" }}
               options={[
                 { value: "male", label: "Male" },

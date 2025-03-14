@@ -132,6 +132,8 @@ const Register = () => {
       try {
         const response = await authService.verifyEmail(formData.email);
 
+        console.log("Email verification response:", response);
+
         if (response.status === "success") {
           // This means the verification email was sent successfully
           setVerificationSuccess(true);
@@ -162,9 +164,19 @@ const Register = () => {
         }
       } catch (err: any) {
         console.error("Email verification error:", err);
-        setEmailError(
-          err.response?.data?.message || "Email verification failed"
-        );
+        // Check if the error indicates the email is already verified
+        if (err.response?.data?.message === "Email already verified") {
+          setVerificationSuccess(true);
+          setEmailVerified(true);
+          setSuccessMessage(
+            "Email is already verified. You can proceed with registration."
+          );
+          setShowAlert(true);
+        } else {
+          setEmailError(
+            err.response?.data?.message || "Email verification failed"
+          );
+        }
       }
 
       return true;
@@ -190,6 +202,8 @@ const Register = () => {
       try {
         const response = await authService.verifyEmail(formData.email);
 
+        console.log("Verification check response:", response);
+
         // If email is already verified, update state
         if (
           response.status === "error" &&
@@ -211,8 +225,26 @@ const Register = () => {
 
           return;
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error using first verification method:", err);
+        // Check if the error indicates the email is already verified
+        if (err.response?.data?.message === "Email already verified") {
+          setEmailVerified(true);
+          setSuccessMessage(
+            "Email verification confirmed! You can now proceed with registration."
+          );
+          setShowAlert(true);
+
+          // Clear the polling interval
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+          }
+
+          setCheckingStatus(false);
+
+          return;
+        }
         // Continue to next method if this fails
       }
 
@@ -222,6 +254,8 @@ const Register = () => {
         const response = await axios.get(verificationCheckUrl, {
           withCredentials: false,
         });
+
+        console.log("Direct verification URL response:", response.data);
 
         if (response.data && response.data.status === "success") {
           // Check if user is verified based on the response
@@ -286,23 +320,20 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isEmailValid = await validateEmail();
     const isPasswordValid = validatePassword();
 
     // Make sure the email is verified before allowing registration
-    if (
-      isEmailValid &&
-      isPasswordValid &&
-      verificationSuccess &&
-      emailVerified
-    ) {
+    if (isPasswordValid && verificationSuccess && emailVerified) {
       setIsLoading(true);
 
       try {
+        console.log("Attempting to register with:", formData.email);
         const response = await authService.register(
           formData.email,
           formData.password
         );
+
+        console.log("Registration response:", response);
 
         if (response.status === "success") {
           setSuccessMessage("Registration successful!");
@@ -310,10 +341,14 @@ const Register = () => {
 
           // After successful registration, log in the user
           try {
+            console.log("Attempting auto-login after registration");
             const loginResponse = await login(
               formData.email,
               formData.password
             );
+
+            console.log("Auto-login response:", loginResponse);
+            console.log("Token after login:", localStorage.getItem("token"));
 
             if (loginResponse.status === "success") {
               // Navigate to complete profile page
@@ -345,6 +380,12 @@ const Register = () => {
     } else if (verificationSuccess && !emailVerified) {
       // If email is not verified yet
       setEmailError("Please verify your email before registering");
+      setShowAlert(true);
+    } else if (!isPasswordValid) {
+      // Error message for password is already set by validatePassword()
+      setShowAlert(true);
+    } else {
+      setEmailError("Please complete all steps: verify email and set password");
       setShowAlert(true);
     }
   };

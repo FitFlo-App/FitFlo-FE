@@ -25,84 +25,102 @@ const OAuthCallbackHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { checkAuthStatus } = useAuth();
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
     const processAuthSilently = async () => {
+      if (!isProcessing) return; // Prevent multiple executions
+
       console.log("OAuthCallbackHandler: Starting token processing");
       const searchParams = new URLSearchParams(location.search);
       const token = searchParams.get("token");
       const errorMsg = searchParams.get("error");
       const baseUrl =
         window.location.hostname === "localhost"
-          ? "http://localhost"
+          ? "http://localhost:5173"
           : "https://fitflo.site";
 
       if (errorMsg || !token) {
-        console.error("OAuthCallbackHandler: Missing token / error message", errorMsg);
+        console.error(
+          "OAuthCallbackHandler: Missing token / error message",
+          errorMsg
+        );
+        setIsProcessing(false);
         window.location.replace(
           `${baseUrl}/login?error=${encodeURIComponent(errorMsg || "No token received")}`
         );
+
         return;
       }
 
-      localStorage.setItem("token", token);
       try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        if (payload.email) localStorage.setItem("email", payload.email);
-      } catch (e) {
-        console.error("OAuthCallbackHandler: Failed to decode JWT", e);
-      }
+        // Store token
+        localStorage.setItem("token", token);
 
-      console.log("OAuthCallbackHandler: Token stored, checking auth status");
-      await checkAuthStatus();
+        // Decode and store email if present
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
 
-      // Fallback: force redirect after 10 seconds if nothing happens
-      const forceRedirectTimeout = setTimeout(() => {
-        console.warn("OAuthCallbackHandler: Force redirect timeout");
-        window.location.replace(`${baseUrl}/login?error=${encodeURIComponent("Timeout")}`);
-      }, 10000);
+          if (payload.email) localStorage.setItem("email", payload.email);
+        } catch (e) {
+          console.error("OAuthCallbackHandler: Failed to decode JWT", e);
+        }
 
-      try {
+        // Update auth status
+        console.log("OAuthCallbackHandler: Token stored, checking auth status");
+        await checkAuthStatus();
+
+        // Single API call to check profile
         console.log("OAuthCallbackHandler: Calling /user/profile/read");
-        const response = await fetch("https://api.fitflo.site/user/profile/read", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        clearTimeout(forceRedirectTimeout);
+        const response = await fetch(
+          "https://api.fitflo.site/user/profile/read",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
-          console.error("OAuthCallbackHandler: API error, status", response.status);
-          window.location.replace(
-            `${baseUrl}/login?error=${encodeURIComponent("API error: Unable to verify account")}`
-          );
-          return;
+          throw new Error(`API error: ${response.status}`);
         }
 
         const data = await response.json();
+
         console.log("OAuthCallbackHandler: Received profile data", data);
 
+        // Determine redirect path based on profile status
         const targetPath =
           data.status === "success"
-            ? (data.data.isProfileCreated ? "/dashboard" : "/complete-profile")
+            ? data.data.isProfileCreated
+              ? "/dashboard"
+              : "/complete-profile"
             : "/login?error=" + encodeURIComponent("Invalid account status");
 
+        setIsProcessing(false);
         console.log("OAuthCallbackHandler: Redirecting to", targetPath);
         window.location.replace(`${baseUrl}${targetPath}`);
       } catch (err) {
-        clearTimeout(forceRedirectTimeout);
-        console.error("OAuthCallbackHandler: Error verifying profile", err);
+        console.error("OAuthCallbackHandler: Error processing auth", err);
+        setIsProcessing(false);
         window.location.replace(
           `${baseUrl}/login?error=${encodeURIComponent("Failed to verify account status")}`
         );
       }
     };
 
-    processAuthSilently();
-  }, [checkAuthStatus, location.search, navigate]);
+    // Only process if we haven't started yet
+    if (isProcessing) {
+      processAuthSilently();
+    }
+
+    // Cleanup function
+    return () => {
+      setIsProcessing(false);
+    };
+  }, [checkAuthStatus, location.search, navigate, isProcessing]);
 
   return (
     <div className="fixed inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center z-50">

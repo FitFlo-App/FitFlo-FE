@@ -198,79 +198,19 @@ const Register = () => {
     setVerificationAttempts((prev) => prev + 1);
 
     try {
-      // Use the proper endpoint to check activation status
-      try {
-        const response = await authService.checkEmailActivation(formData.email);
-
-        console.log("Activation status check response:", response);
-
-        // Check if the email is activated based on the response
-        if (response.status === "success" && response.data?.isActivated) {
-          setEmailVerified(true);
-          setSuccessMessage(
-            "Email verification confirmed! You can now proceed with registration."
-          );
-          setShowAlert(true);
-
-          // Clear the polling interval
-          if (pollingIntervalRef.current) {
-            clearInterval(pollingIntervalRef.current);
-            pollingIntervalRef.current = null;
-          }
-        }
-      } catch (err: any) {
-        console.error("Error checking activation status:", err);
-        // Check if the error indicates the email is already verified
-        if (
-          err.response?.data?.status === "success" && 
-          err.response?.data?.data?.isActivated === true
-        ) {
-          setEmailVerified(true);
-          setSuccessMessage(
-            "Email verification confirmed! You can now proceed with registration."
-          );
-          setShowAlert(true);
-
-          // Clear the polling interval
-          if (pollingIntervalRef.current) {
-            clearInterval(pollingIntervalRef.current);
-            pollingIntervalRef.current = null;
-          }
-        }
-        // Continue to next method if this fails
-      }
-
-      // If the direct API call approach doesn't work, try the verification URL as fallback
-      if (!emailVerified && verificationCheckUrl) {
-        try {
-          // Use axios directly without credentials to avoid CORS issues
-          const response = await axios.get(verificationCheckUrl, {
-            withCredentials: false,
-          });
-
-          console.log("Verification URL fallback response:", response.data);
-
-          if (response.data && response.data.status === "success") {
-            // Check if user is verified based on the response
-            if (response.data.data.isActivated === true) {
-              setEmailVerified(true);
-              setSuccessMessage(
-                "Email verification confirmed! You can now proceed with registration."
-              );
-              setShowAlert(true);
-
-              // Clear the polling interval
-              if (pollingIntervalRef.current) {
-                clearInterval(pollingIntervalRef.current);
-                pollingIntervalRef.current = null;
-              }
-            }
-          }
-        } catch (err: any) {
-          console.error("Error using verification URL:", err);
-          // Don't show an error to the user on automatic checks
+      const response = await authService.checkEmailActivation(verificationCheckUrl);
+      console.log("Email activation status response:", response);
+      if (response.status === "success" && response.data.isVerified === true) {
+        setEmailVerified(true);
+        setSuccessMessage("Email verification confirmed! You can now proceed with registration.");
+        setShowAlert(true);
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
         }
       }
+    } catch (err: any) {
+      console.error("Error checking activation status:", err);
     } finally {
       setCheckingStatus(false);
     }

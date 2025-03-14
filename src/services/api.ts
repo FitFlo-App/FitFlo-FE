@@ -90,16 +90,14 @@ export const authService = {
     }
   },
 
-  // Check email activation status
-  checkEmailActivation: async (email: string) => {
+  // Check email activation status using the verification URL from /verify response
+  checkEmailActivation: async (verificationUrl: string) => {
     try {
-      console.log("Checking email activation status for:", email);
-      const response = await api.post("/user/auth/email/activation", {
-        email,
+      console.log("Checking email activation status using URL:", verificationUrl);
+      const response = await axios.get(verificationUrl, {
+        withCredentials: false,
       });
-
-      console.log("Email activation status response:", response.data);
-
+      console.log("Email activation check response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Email activation check error:", error);

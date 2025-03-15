@@ -64,8 +64,8 @@ const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("security");
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [mobileVerified, setMobileVerified] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(true);
+  const [mobileVerified] = useState(false);
+  const [emailVerified] = useState(true);
   const [currentSession, setCurrentSession] = useState<SessionInfo | null>(
     null
   );

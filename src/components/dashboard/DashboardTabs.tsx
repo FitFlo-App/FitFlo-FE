@@ -6,6 +6,8 @@ import {
   DollarOutlined,
 } from "@ant-design/icons";
 
+import HealthCostSummary from "../HealthCostSummary";
+
 import HealthInsights from "@/components/HealthInsights";
 import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 import TreatmentPlan from "@/components/TreatmentPlan";
@@ -42,15 +44,15 @@ const DashboardTabs = ({
               <HealthInsights />
             </div>
             <div className="col-span-1">
-              <RealTimeMonitoring isConnected={isConnected} />
+              <div className="space-y-6">
+                <RealTimeMonitoring isConnected={isConnected} />
+                <HealthCostSummary />
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6">
             <div className="col-span-1">
               <TreatmentPlan />
-            </div>
-            <div className="col-span-1">
-              <CostManagement />
             </div>
           </div>
         </div>
@@ -99,10 +101,10 @@ const DashboardTabs = ({
   return (
     <Tabs
       activeKey={activeTab}
+      animated={{ inkBar: true, tabPane: true }}
       className="dashboard-tabs"
       defaultActiveKey="1"
       items={items}
-      onChange={setActiveTab}
       size="large"
       tabBarGutter={24}
       tabBarStyle={{
@@ -110,7 +112,7 @@ const DashboardTabs = ({
         borderBottom: "1px solid #f0f0f0",
         paddingBottom: 0,
       }}
-      animated={{ inkBar: true, tabPane: true }}
+      onChange={setActiveTab}
     />
   );
 };

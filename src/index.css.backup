@@ -154,6 +154,8 @@
   }
 }
 
+/* Ant Design specific styles have been moved to src/styles/ant-design.css */
+
 /* Dashboard Styles */
 .dashboard-tabs .ant-tabs-nav {
   margin-bottom: 24px;

@@ -1,11 +1,13 @@
+import { Typography } from "antd";
+
 import { useAuth } from "@/utils/auth";
 import AppLayout from "@/components/AppLayout";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardTabs from "@/components/dashboard/DashboardTabs";
-import QuickStats from "@/components/dashboard/QuickStats";
+import EnhancedQuickStats from "@/components/dashboard/EnhancedQuickStats";
 import { useDashboard } from "@/context/DashboardContext";
 
-const Dashboard = () => {
+const EnhancedDashboard = () => {
   const { user } = useAuth();
   const {
     searchValue,
@@ -40,18 +42,18 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Health Stats */}
-        <QuickStats isConnected={isConnected} />
+        <EnhancedQuickStats isConnected={isConnected} />
 
         {/* Dashboard Tab Sections */}
         <DashboardTabs
           activeTab={activeTab}
-          handleConnect={handleConnect}
-          isConnected={isConnected}
           setActiveTab={setActiveTab}
+          isConnected={isConnected}
+          handleConnect={handleConnect}
         />
       </div>
     </AppLayout>
   );
 };
 
-export default Dashboard;
+export default EnhancedDashboard;

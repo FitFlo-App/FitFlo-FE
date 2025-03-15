@@ -8,7 +8,7 @@ import { List, Typography, Tag, Divider, Button } from "antd";
 
 import { Card } from "./ui/card";
 
-const { Paragraph, Text, Title } = Typography;
+const { Paragraph, Text } = Typography;
 
 interface HealthInsight {
   id: string;

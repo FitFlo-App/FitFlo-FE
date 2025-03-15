@@ -229,7 +229,6 @@ const HealthAnatomy = () => {
   const [selectedMetric, setSelectedMetric] = useState<
     keyof typeof healthMetrics | null
   >(null);
-  const [activeTab, setActiveTab] = useState("overview");
 
   // Get status color
   const getStatusColor = (status: string) => {
@@ -476,7 +475,9 @@ const HealthAnatomy = () => {
             <Tabs
               className="health-tabs"
               defaultActiveKey="overview"
-              onChange={(key) => setActiveTab(key)}
+              onChange={() => {
+                /* Handle tab change */
+              }}
             >
               <TabPane
                 key="overview"

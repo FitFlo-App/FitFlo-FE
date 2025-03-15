@@ -176,7 +176,7 @@ const CostManagement: React.FC<CostManagementProps> = ({
   budgets: initialBudgets = sampleBudgets,
 }) => {
   // State management
-  const [timeframe, setTimeframe] = useState<string>("month");
+  const [, setTimeframe] = useState<string>("month");
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
   const [budgets, setBudgets] = useState<Budget[]>(initialBudgets);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>(expenses);
@@ -513,36 +513,19 @@ const CostManagement: React.FC<CostManagementProps> = ({
   };
 
   // New function to simulate bill scanning
-  const simulateBillScanning = (file: File) => {
+  const simulateBillScanning = () => {
     setIsScanning(true);
-
-    // Simulate OCR processing delay
     setTimeout(() => {
-      // Simulate extracting data from a scanned bill
-      const mockScannedData: Partial<Expense> = {
-        date: new Date().toISOString().split("T")[0],
-        category: "Medication",
-        description: "Prescription Medication",
-        amount: 78.5,
-        status: "pending",
-        insurance: "Pending Approval",
-      };
-
-      setScannedData(mockScannedData);
       setIsScanning(false);
-
-      // Pre-fill the expense form with the scanned data
-      expenseForm.setFieldsValue({
-        ...mockScannedData,
-        date: undefined, // Reset date field as it needs a moment object
+      setScannedData({
+        date: "2023-05-15",
+        category: "Consultation",
+        description: "Primary Care Visit",
+        amount: 125.0,
+        status: "pending",
+        insurance: "Insurance Pending",
       });
-
-      notification.success({
-        message: "Bill Scanned Successfully",
-        description:
-          "We've extracted the information from your bill. Please verify the details before adding it as an expense.",
-      });
-    }, 2000); // Simulate 2s scanning time
+    }, 2000);
   };
 
   // Handle bill upload
@@ -552,7 +535,7 @@ const CostManagement: React.FC<CostManagementProps> = ({
     }
 
     if (info.file.originFileObj) {
-      simulateBillScanning(info.file.originFileObj);
+      simulateBillScanning();
     }
   };
 
@@ -561,8 +544,9 @@ const CostManagement: React.FC<CostManagementProps> = ({
     name: "bill",
     multiple: false,
     accept: "image/*,.pdf",
-    beforeUpload: (file) => {
-      // Prevent actual upload
+    beforeUpload: () => {
+      simulateBillScanning();
+
       return false;
     },
     onChange: handleBillUpload,
@@ -590,20 +574,18 @@ const CostManagement: React.FC<CostManagementProps> = ({
       setIsScanning(false);
 
       // Simulate extracting data from a camera-captured bill
-      const mockScannedData: Partial<Expense> = {
-        date: new Date().toISOString().split("T")[0],
+      setScannedData({
+        date: "2023-05-15",
         category: "Consultation",
         description: "Primary Care Visit",
         amount: 125.0,
         status: "pending",
         insurance: "Insurance Pending",
-      };
-
-      setScannedData(mockScannedData);
+      });
 
       // Pre-fill the expense form with the scanned data
       expenseForm.setFieldsValue({
-        ...mockScannedData,
+        ...scannedData,
         date: undefined, // Reset date field as it needs a moment object
       });
 
@@ -1338,7 +1320,7 @@ const CostManagement: React.FC<CostManagementProps> = ({
               tip="Scanning and extracting data..."
             />
             <p className="mt-4 text-gray-500">
-              We're analyzing the bill and extracting relevant information
+              We&apos;re analyzing the bill and extracting relevant information
             </p>
           </div>
         ) : scannedData ? (

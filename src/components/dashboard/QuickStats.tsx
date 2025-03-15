@@ -15,7 +15,7 @@ const QuickStats = ({ isConnected }: QuickStatsProps) => {
   const [heartRate, setHeartRate] = useState(72);
   const [steps, setSteps] = useState(isConnected ? 8234 : 0);
   const [calories, setCalories] = useState(isConnected ? 1240 : 0);
-  const [sleep, setSleep] = useState(isConnected ? 7.5 : 0);
+  const [sleep] = useState(isConnected ? 7.5 : 0);
   const [progress, setProgress] = useState(isConnected ? 82 : 0);
 
   // Simulate real-time data updates if connected

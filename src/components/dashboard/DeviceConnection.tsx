@@ -31,9 +31,16 @@ import {
   RobotOutlined,
 } from "@ant-design/icons";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 const { Option } = Select;
+
+interface Device {
+  id: number;
+  name: string;
+  connected: boolean;
+  type: string;
+}
 
 interface DeviceConnectionProps {
   isConnected: boolean;
@@ -139,9 +146,10 @@ const DeviceConnection = ({
   isConnected,
   onConnect,
 }: DeviceConnectionProps) => {
+  // Device connection states
   const [batteryLevel, setBatteryLevel] = useState(78);
-  const [lastSync, setLastSync] = useState("Just now");
-  const [devices, setDevices] = useState([
+  const [lastSync] = useState("Just now");
+  const [availableDevices, setAvailableDevices] = useState<Device[]>([
     {
       id: 1,
       name: "Apple Watch Series 8",
@@ -158,14 +166,13 @@ const DeviceConnection = ({
   ]);
 
   // Health data states
-  const [heartRateData, setHeartRateData] = useState(generateHeartRateData());
+  const [heartRateData] = useState(generateHeartRateData());
   const [currentHeartRate, setCurrentHeartRate] = useState(72);
-  const [sleepData, setSleepData] = useState(generateSleepData());
-  const [stressData, setStressData] = useState(generateStressData());
+  const [sleepData] = useState(generateSleepData());
+  const [stressData] = useState(generateStressData());
   const [oxygenLevel, setOxygenLevel] = useState(98);
-  const [bodyTemperature, setBodyTemperature] = useState(36.6);
-  const [selectedTimeRange, setSelectedTimeRange] = useState("24h");
-  const [alertsVisible, setAlertsVisible] = useState(true);
+  const [, setSelectedTimeRange] = useState("24h");
+  const [,] = useState(true);
 
   // Simulate data updates when connected
   useEffect(() => {
@@ -195,16 +202,11 @@ const DeviceConnection = ({
     if (deviceId === 1) {
       onConnect();
     }
-    setDevices(
-      devices.map((device) =>
+    setAvailableDevices(
+      availableDevices.map((device) =>
         device.id === deviceId ? { ...device, connected: true } : device
       )
     );
-  };
-
-  const handleTimeRangeChange = (range: string) => {
-    setSelectedTimeRange(range);
-    // In a real app, we would fetch data for the selected range
   };
 
   const getTotalSleepHours = () => {
@@ -312,9 +314,8 @@ const DeviceConnection = ({
           <Select
             defaultValue="24h"
             style={{ width: 120, marginLeft: 8 }}
-            onChange={handleTimeRangeChange}
+            onChange={(value) => setSelectedTimeRange(value)}
           >
-            <Option value="6h">Last 6 hours</Option>
             <Option value="24h">Last 24 hours</Option>
             <Option value="7d">Last 7 days</Option>
             <Option value="30d">Last 30 days</Option>
@@ -326,6 +327,17 @@ const DeviceConnection = ({
           </Text>
           <SyncOutlined spin={false} />
         </div>
+      </div>
+
+      {/* Device battery status */}
+      <div className="mb-4">
+        <Text strong>Device Battery: {batteryLevel.toFixed(0)}%</Text>
+        <Progress
+          percent={batteryLevel}
+          showInfo={false}
+          size="small"
+          strokeColor={batteryLevel > 20 ? "#52c41a" : "#ff4d4f"}
+        />
       </div>
 
       {/* Health metrics dashboard */}
@@ -524,7 +536,7 @@ const DeviceConnection = ({
         <Col md={12} xs={24}>
           <Card className="h-full" title="Available Devices">
             <List
-              dataSource={devices}
+              dataSource={availableDevices}
               renderItem={(device) => (
                 <List.Item
                   actions={[

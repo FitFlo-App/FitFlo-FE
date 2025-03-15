@@ -1,5 +1,3 @@
-import { Typography } from "antd";
-
 import { useAuth } from "@/utils/auth";
 import AppLayout from "@/components/AppLayout";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";

@@ -193,6 +193,7 @@ function App() {
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
         <Route element={<ForgetPasswordPage />} path="/forgetpassword" />
+        <Route element={<MilestonesPage />} path="/milestones" />
 
         {/* OAuth callback route - invisible processor */}
         <Route element={<OAuthCallbackHandler />} path="/oauth-callback" />
@@ -217,16 +218,6 @@ function App() {
             </ProtectedRoute>
           }
           path="/complete-profile"
-        />
-        <Route
-          element={
-            <ProtectedRoute>
-              <LoadingWrapper>
-                <MilestonesPage />
-              </LoadingWrapper>
-            </ProtectedRoute>
-          }
-          path="/milestones"
         />
         <Route
           element={

@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   UserOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  EnvironmentOutlined,
   EditOutlined,
   LinkOutlined,
   CheckOutlined,

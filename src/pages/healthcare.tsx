@@ -10,7 +10,6 @@ import {
   Space,
   Collapse,
   Divider,
-  Rate,
   Badge,
   Tooltip,
   Select,
@@ -30,7 +29,6 @@ import {
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 
-import FilterButtonGroup from "@/components/ui/filter-button";
 import Hospital1 from "@/assets/hospital1.jpg";
 import Hospital2 from "@/assets/hospital2.png";
 import Hospital3 from "@/assets/hospital3.jpg";
@@ -579,7 +577,7 @@ const HealthcarePage = () => {
     <AppLayout>
       <div className="p-4 md:p-6">
         <div className="mb-6">
-          <Title level={2} className="mb-1">
+          <Title className="mb-1" level={2}>
             Healthcare Facilities
           </Title>
           <Text type="secondary">
@@ -588,22 +586,22 @@ const HealthcarePage = () => {
         </div>
 
         <Card className="mb-6 shadow-md">
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} md={12} lg={14}>
+          <Row align="middle" gutter={[16, 16]}>
+            <Col lg={14} md={12} xs={24}>
               <Input
+                allowClear
                 placeholder="Search healthcare facilities..."
                 prefix={<SearchOutlined />}
                 size="large"
-                allowClear
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
             </Col>
-            <Col xs={12} md={6} lg={5}>
+            <Col lg={5} md={6} xs={12}>
               <Select
                 placeholder="Sort by"
-                style={{ width: "100%" }}
                 size="large"
+                style={{ width: "100%" }}
                 value={sortBy}
                 onChange={handleSortChange}
               >
@@ -611,13 +609,13 @@ const HealthcarePage = () => {
                 <Option value="city">City</Option>
               </Select>
             </Col>
-            <Col xs={12} md={6} lg={5}>
+            <Col lg={5} md={6} xs={12}>
               <Button
-                type="primary"
-                icon={<FilterOutlined />}
-                onClick={toggleFilterVisibility}
-                size="large"
                 block
+                icon={<FilterOutlined />}
+                size="large"
+                type="primary"
+                onClick={toggleFilterVisibility}
               >
                 {isFilterVisible ? "Hide Filters" : "Show Filters"}
               </Button>
@@ -637,15 +635,14 @@ const HealthcarePage = () => {
             <Divider orientation="left">Filter Options</Divider>
 
             <Row gutter={[24, 16]}>
-              <Col xs={24} md={12}>
+              <Col md={12} xs={24}>
                 <Text strong>Facility Type</Text>
                 <div className="mt-2">
-                  <Space size={[8, 16]} wrap>
+                  <Space wrap size={[8, 16]}>
                     {healthcareTypes.map((type) => (
                       <Tag.CheckableTag
                         key={type}
                         checked={selectedTypes.includes(type)}
-                        onChange={() => handleTypeFilterChange(type)}
                         className="py-1 px-3 border rounded-md"
                         style={{
                           backgroundColor: selectedTypes.includes(type)
@@ -655,6 +652,7 @@ const HealthcarePage = () => {
                             ? `var(--ant-color-${getTypeColor(type)}-5)`
                             : "#d9d9d9",
                         }}
+                        onChange={() => handleTypeFilterChange(type)}
                       >
                         <Space>
                           {getTypeIcon(type)}
@@ -665,15 +663,14 @@ const HealthcarePage = () => {
                   </Space>
                 </div>
               </Col>
-              <Col xs={24} md={12}>
+              <Col md={12} xs={24}>
                 <Text strong>Payment Options</Text>
                 <div className="mt-2">
-                  <Space size={[8, 16]} wrap>
+                  <Space wrap size={[8, 16]}>
                     {paymentOptions.map((payment) => (
                       <Tag.CheckableTag
                         key={payment}
                         checked={selectedPayments.includes(payment)}
-                        onChange={() => handlePaymentFilterChange(payment)}
                         className="py-1 px-3 border rounded-md"
                         style={{
                           backgroundColor: selectedPayments.includes(payment)
@@ -683,6 +680,7 @@ const HealthcarePage = () => {
                             ? "#1890ff"
                             : "#d9d9d9",
                         }}
+                        onChange={() => handlePaymentFilterChange(payment)}
                       >
                         <Space>
                           {payment.includes("Cash") && <DollarOutlined />}
@@ -704,18 +702,18 @@ const HealthcarePage = () => {
 
         {filteredData.length === 0 ? (
           <Empty
-            description="No healthcare facilities found matching your criteria"
             className="my-12"
+            description="No healthcare facilities found matching your criteria"
           />
         ) : (
           <Row gutter={[16, 16]}>
             {filteredData.map((facility, index) => (
               <Col
-                xs={24}
-                sm={12}
-                lg={8}
-                xl={6}
                 key={`${facility.name}-${index}`}
+                lg={8}
+                sm={12}
+                xl={6}
+                xs={24}
               >
                 <motion.div
                   animate={{ opacity: 1, y: 0 }}
@@ -724,12 +722,13 @@ const HealthcarePage = () => {
                 >
                   <Card
                     hoverable
+                    className="h-full shadow-md hover:shadow-lg transition-shadow"
                     cover={
                       <div className="relative">
                         <img
                           alt={facility.name}
-                          src={facility.picture}
                           className="h-48 w-full object-cover"
+                          src={facility.picture}
                         />
                         <div className="absolute top-2 right-2">
                           <Tag color={getTypeColor(facility.healthcare_type)}>
@@ -741,8 +740,8 @@ const HealthcarePage = () => {
                         </div>
                         {facility.type && (
                           <Badge
-                            count={`Type ${facility.type}`}
                             className="absolute top-2 left-2"
+                            count={`Type ${facility.type}`}
                             style={{
                               backgroundColor: "#2f54eb",
                               fontSize: "12px",
@@ -752,10 +751,9 @@ const HealthcarePage = () => {
                         )}
                       </div>
                     }
-                    className="h-full shadow-md hover:shadow-lg transition-shadow"
                   >
                     <Title level={5}>{facility.name}</Title>
-                    <Space direction="vertical" size={1} className="w-full">
+                    <Space className="w-full" direction="vertical" size={1}>
                       <Text type="secondary">
                         <Space>
                           <EnvironmentOutlined />
@@ -776,8 +774,8 @@ const HealthcarePage = () => {
                       <Divider className="my-2" />
 
                       <Collapse ghost className="ant-collapse-borderless">
-                        <Panel header="Services & Facilities" key="1">
-                          <Space size={[4, 8]} wrap>
+                        <Panel key="1" header="Services & Facilities">
+                          <Space wrap size={[4, 8]}>
                             {[
                               ...(facility.services || []),
                               ...(facility.facilities || []),

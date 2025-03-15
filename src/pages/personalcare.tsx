@@ -28,6 +28,7 @@ import {
   Divider,
   Timeline,
   Progress,
+  Empty,
 } from "antd";
 import {
   HeartFilled,
@@ -43,6 +44,7 @@ import {
   MailOutlined,
   PlusOutlined,
   EditOutlined,
+  DeleteOutlined,
   InfoCircleOutlined,
   ClockCircleOutlined,
   AreaChartOutlined,
@@ -72,6 +74,7 @@ import {
   ShareAltOutlined,
   ExperimentOutlined,
   UserOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 import {
   LineChart,
@@ -476,19 +479,22 @@ const PersonalCare: React.FC = () => {
   };
 
   const handleCalendarSelect = (date: any) => {
-    const selectedDate = date.format("YYYY-MM-DD");
+    console.log("Date selected:", date.format("YYYY-MM-DD"));
+    const formattedDate = date.format("YYYY-MM-DD");
 
-    setSelectedDate(selectedDate);
+    setSelectedDate(date); // Store the Dayjs object directly
 
     // Check if there are events for this date
-    const events = calendarData[selectedDate] || [];
+    const events = calendarData[formattedDate] || [];
 
+    setSelectedEvents(events);
+
+    // Always show a modal - either events or add new
     if (events.length > 0) {
-      setSelectedEvents(events);
+      console.log("Opening calendar event modal with events:", events);
       setIsCalendarEventModalVisible(true);
     } else {
-      // If no events, ask if user wants to add one
-      setSelectedDate(selectedDate);
+      console.log("Opening add event modal for date:", formattedDate);
       setIsAddEventModalVisible(true);
     }
   };
@@ -552,14 +558,19 @@ const PersonalCare: React.FC = () => {
         time: values.eventTime ? values.eventTime.format("HH:mm") : undefined,
       };
 
+      // Get formatted date string for indexing
+      const formattedDate = selectedDate
+        ? selectedDate.format("YYYY-MM-DD")
+        : "";
+
       // Update calendar data
       setCalendarData((prevData) => {
         const newData = { ...prevData };
 
-        if (!newData[selectedDate!]) {
-          newData[selectedDate!] = [];
+        if (!newData[formattedDate]) {
+          newData[formattedDate] = [];
         }
-        newData[selectedDate!].push(newEvent);
+        newData[formattedDate].push(newEvent);
 
         return newData;
       });
@@ -696,25 +707,41 @@ const PersonalCare: React.FC = () => {
           {/* Left column (8/24) - Calendar and Appointments */}
           <Col lg={8} xs={24}>
             <AntCard
+              bodyStyle={{ padding: 0 }}
               bordered={false}
-              className="mb-4"
+              className="mb-4 health-calendar-card"
               style={{
                 borderRadius: "12px",
-                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+                overflow: "hidden",
               }}
-              title={
-                <Space>
-                  <CalendarOutlined className="text-blue-600" />
-                  <span>July 2022</span>
-                </Space>
-              }
             >
-              <Calendar
-                dateCellRender={dateCellRender}
-                fullscreen={false}
-                onPanelChange={handlePanelChange}
-                onSelect={handleCalendarSelect}
-              />
+              {/* Calendar header - simplified */}
+              <div className="flex justify-between items-center px-4 py-3 border-b">
+                <div className="flex items-center">
+                  <CalendarOutlined className="text-blue-600 mr-2" />
+                  <span className="font-medium">Health Calendar</span>
+                </div>
+                <Button
+                  icon={<PlusOutlined />}
+                  size="small"
+                  type="primary"
+                  onClick={() => setIsAddEventModalVisible(true)}
+                >
+                  Add
+                </Button>
+              </div>
+
+              {/* Calendar body - simplified */}
+              <div className="calendar-container">
+                <Calendar
+                  className="modern-calendar"
+                  dateCellRender={dateCellRender}
+                  fullscreen={false}
+                  onPanelChange={handlePanelChange}
+                  onSelect={handleCalendarSelect}
+                />
+              </div>
             </AntCard>
 
             <AntCard
@@ -2212,15 +2239,21 @@ const PersonalCare: React.FC = () => {
                                 ) {
                                   return (
                                     <div className="h-full flex items-center justify-center">
-                                      <div
-                                        className="w-6 h-6 rounded-full flex items-center justify-center"
-                                        style={{
-                                          backgroundColor: "#e6f7ff",
-                                          color: "#1890ff",
-                                        }}
+                                      <Tooltip
+                                        title={`Take ${medication.name} ${medication.frequency}`}
                                       >
-                                        {date.date()}
-                                      </div>
+                                        <div
+                                          className="w-6 h-6 rounded-full flex items-center justify-center"
+                                          style={{
+                                            backgroundColor: "#e6f7ff",
+                                            color: "#1890ff",
+                                            border: "1px solid #1890ff",
+                                            cursor: "pointer",
+                                          }}
+                                        >
+                                          {date.date()}
+                                        </div>
+                                      </Tooltip>
                                     </div>
                                   );
                                 }
@@ -2228,23 +2261,41 @@ const PersonalCare: React.FC = () => {
                                 return null;
                               }}
                               fullscreen={false}
-                              headerRender={() => (
+                              headerRender={({
+                                value,
+                                type,
+                                onChange,
+                                onTypeChange,
+                              }) => (
                                 <div className="p-2 flex justify-between items-center">
                                   <Title level={5} style={{ margin: 0 }}>
-                                    July 2023
+                                    {value.format("MMMM YYYY")}
                                   </Title>
                                   <Space>
-                                    <Button size="small">Today</Button>
                                     <Button
-                                      icon={<LeftOutlined />}
                                       size="small"
-                                      type="text"
-                                    />
+                                      onClick={() =>
+                                        onChange(
+                                          value.clone().subtract(1, "month")
+                                        )
+                                      }
+                                    >
+                                      <LeftOutlined />
+                                    </Button>
                                     <Button
-                                      icon={<RightOutlined />}
                                       size="small"
-                                      type="text"
-                                    />
+                                      onClick={() => onChange(value.clone())}
+                                    >
+                                      Today
+                                    </Button>
+                                    <Button
+                                      size="small"
+                                      onClick={() =>
+                                        onChange(value.clone().add(1, "month"))
+                                      }
+                                    >
+                                      <RightOutlined />
+                                    </Button>
                                   </Space>
                                 </div>
                               )}
@@ -3097,17 +3148,19 @@ const PersonalCare: React.FC = () => {
                       "#722ed1",
                       "#13c2c2",
                     ].map((color) => (
-                      <div
+                      <button
                         key={color}
+                        aria-label={`Select color ${color}`}
                         className="cursor-pointer w-8 h-8 rounded-md border border-gray-200 flex items-center justify-center"
                         style={{ backgroundColor: `${color}15` }}
+                        type="button"
                         onClick={() => message.info(`Selected color: ${color}`)}
                       >
                         <div
                           className="w-4 h-4 rounded-full"
                           style={{ backgroundColor: color }}
                         />
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </Form.Item>
@@ -3201,6 +3254,256 @@ const PersonalCare: React.FC = () => {
           </Form>
         </Modal>
       </div>
+
+      {/* Calendar Events Modal */}
+      <Modal
+        footer={[
+          <Button
+            key="add"
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => {
+              setIsCalendarEventModalVisible(false);
+              setIsAddEventModalVisible(true);
+            }}
+          >
+            Add Event
+          </Button>,
+          <Button
+            key="close"
+            onClick={() => setIsCalendarEventModalVisible(false)}
+          >
+            Close
+          </Button>,
+        ]}
+        open={isCalendarEventModalVisible}
+        title={
+          <Space>
+            <CalendarOutlined className="text-blue-600" />
+            <span>
+              Events for {selectedDate ? selectedDate.format("YYYY-MM-DD") : ""}
+            </span>
+          </Space>
+        }
+        onCancel={() => setIsCalendarEventModalVisible(false)}
+      >
+        {selectedEvents && selectedEvents.length > 0 ? (
+          <List
+            dataSource={selectedEvents}
+            renderItem={(event, index) => {
+              let color;
+              let icon;
+
+              switch (event.type) {
+                case "appointment":
+                  color = "blue";
+                  icon = <MedicineBoxOutlined />;
+                  break;
+                case "medication":
+                  color = "green";
+                  icon = <MedicineBoxTwoTone twoToneColor="#52c41a" />;
+                  break;
+                case "exercise":
+                  color = "orange";
+                  icon = <HeartOutlined style={{ color: "#fa8c16" }} />;
+                  break;
+                case "measurement":
+                  color = "purple";
+                  icon = <DashboardOutlined style={{ color: "#722ed1" }} />;
+                  break;
+                default:
+                  color = "default";
+                  icon = <InfoCircleOutlined />;
+              }
+
+              return (
+                <List.Item
+                  key={index}
+                  actions={[
+                    <Button
+                      key="edit"
+                      icon={<EditOutlined />}
+                      size="small"
+                      type="text"
+                      onClick={() =>
+                        message.info(
+                          "Edit functionality would be implemented here"
+                        )
+                      }
+                    />,
+                    <Button
+                      key="delete"
+                      danger
+                      icon={<DeleteOutlined />}
+                      size="small"
+                      type="text"
+                      onClick={() =>
+                        message.info(
+                          "Delete functionality would be implemented here"
+                        )
+                      }
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        icon={icon}
+                        style={{
+                          backgroundColor:
+                            event.type === "appointment"
+                              ? "#1890ff"
+                              : event.type === "medication"
+                                ? "#52c41a"
+                                : event.type === "exercise"
+                                  ? "#fa8c16"
+                                  : "#722ed1",
+                        }}
+                      />
+                    }
+                    description={`Type: ${event.type.charAt(0).toUpperCase() + event.type.slice(1)}`}
+                    title={
+                      <Space>
+                        <span>{event.content}</span>
+                        {event.time && <Tag color={color}>{event.time}</Tag>}
+                      </Space>
+                    }
+                  />
+                </List.Item>
+              );
+            }}
+            style={{ maxHeight: "400px", overflow: "auto" }}
+          />
+        ) : (
+          <div className="text-center py-6">
+            <Empty description="No events for this date" />
+            <Button
+              className="mt-4"
+              icon={<PlusOutlined />}
+              type="primary"
+              onClick={() => {
+                setIsCalendarEventModalVisible(false);
+                setIsAddEventModalVisible(true);
+              }}
+            >
+              Add Event
+            </Button>
+          </div>
+        )}
+      </Modal>
+
+      {/* Add styles for calendar in the component */}
+      <style>
+        {`
+          /* Minimalist Calendar Styles */
+          .health-calendar-card .ant-card-body {
+            padding: 0;
+          }
+          
+          .modern-calendar {
+            border: none;
+          }
+          
+          .modern-calendar .ant-picker-calendar-header {
+            padding: 8px 0;
+          }
+          
+          /* Calendar cells */
+          .modern-calendar .ant-picker-content th {
+            padding: 8px 0;
+            color: #666;
+          }
+          
+          .modern-calendar .ant-picker-cell {
+            padding: 2px 0;
+          }
+          
+          .modern-calendar .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+            background: #1890ff;
+            border-radius: 4px;
+          }
+          
+          .modern-calendar .ant-picker-cell:hover:not(.ant-picker-cell-selected) .ant-picker-cell-inner {
+            background: #f0f0f0;
+            border-radius: 4px;
+          }
+          
+          .modern-calendar .ant-picker-cell-today .ant-picker-cell-inner {
+            border: 1px solid #1890ff;
+            border-radius: 4px;
+          }
+          
+          .modern-calendar .ant-picker-cell-out-of-view {
+            opacity: 0.5;
+          }
+          
+          /* Events styling */
+          .modern-calendar .ant-badge-status-text {
+            font-size: 11px;
+          }
+          
+          .modern-calendar .ant-badge-status-dot {
+            width: 6px;
+            height: 6px;
+          }
+        `}
+      </style>
+
+      {/* Add Event Modal */}
+      <Modal
+        footer={[
+          <Button key="cancel" onClick={() => setIsAddEventModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleAddEvent}>
+            Add Event
+          </Button>,
+        ]}
+        open={isAddEventModalVisible}
+        title={
+          <Space>
+            <PlusOutlined className="text-blue-600" />
+            <span>
+              Add Event for{" "}
+              {selectedDate ? selectedDate.format("YYYY-MM-DD") : ""}
+            </span>
+          </Space>
+        }
+        onCancel={() => setIsAddEventModalVisible(false)}
+      >
+        <Form className="mt-3" form={eventForm} layout="vertical">
+          <Form.Item
+            label="Event Type"
+            name="eventType"
+            rules={[{ required: true, message: "Please select an event type" }]}
+          >
+            <Radio.Group>
+              <Radio.Button value="appointment">Appointment</Radio.Button>
+              <Radio.Button value="medication">Medication</Radio.Button>
+              <Radio.Button value="exercise">Exercise</Radio.Button>
+              <Radio.Button value="measurement">Measurement</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item
+            label="Event Description"
+            name="eventContent"
+            rules={[
+              { required: true, message: "Please enter event description" },
+            ]}
+          >
+            <Input placeholder="Enter event description" />
+          </Form.Item>
+
+          <Form.Item label="Time (Optional)" name="eventTime">
+            <TimePicker className="w-full" format="HH:mm" />
+          </Form.Item>
+
+          <Form.Item label="Notes (Optional)" name="eventNotes">
+            <Input.TextArea placeholder="Add any additional notes" rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </AppLayout>
   );
 };

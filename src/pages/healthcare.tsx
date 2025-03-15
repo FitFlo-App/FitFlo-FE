@@ -768,7 +768,7 @@ const HealthcarePage = () => {
                     aria-label={
                       isFavorite ? "Remove from favorites" : "Add to favorites"
                     }
-                    className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 z-10"
+                    className="absolute top-3 right-3 bg-white p-2.5 rounded-full shadow-md hover:bg-gray-100 z-10 w-10 h-10 flex items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavorite(facility.name);
@@ -777,7 +777,7 @@ const HealthcarePage = () => {
                     <HeartFilled
                       style={{
                         color: isFavorite ? "#ff4d4f" : "#d9d9d9",
-                        fontSize: 18,
+                        fontSize: 20,
                       }}
                     />
                   </button>
@@ -971,10 +971,13 @@ const HealthcarePage = () => {
                   aria-label={
                     isFavorite ? "Remove from favorites" : "Add to favorites"
                   }
-                  className="absolute -top-2 -right-2 bg-white shadow-sm rounded-full w-8 h-8 flex items-center justify-center p-0"
+                  className="absolute -top-2 -right-2 bg-white shadow-sm rounded-full w-9 h-9 flex items-center justify-center p-0"
                   icon={
                     <HeartFilled
-                      style={{ color: isFavorite ? "#ff4d4f" : "#d9d9d9" }}
+                      style={{
+                        color: isFavorite ? "#ff4d4f" : "#d9d9d9",
+                        fontSize: 18,
+                      }}
                     />
                   }
                   type="text"
@@ -1277,7 +1280,7 @@ const HealthcarePage = () => {
           <div className="mb-8">
             <Row gutter={[24, 24]}>
               <Col lg={6} span={24}>
-                <Card className="h-full shadow-md">
+                <Card className="h-full shadow-md" style={{ height: "100%" }}>
                   <Statistic
                     className="mb-4"
                     prefix={<MedicineBoxOutlined />}
@@ -1333,7 +1336,10 @@ const HealthcarePage = () => {
                 </Card>
               </Col>
               <Col lg={18} span={24}>
-                <div className="bg-white p-5 rounded-lg shadow-md mb-4">
+                <div
+                  className="bg-white p-5 rounded-lg shadow-md mb-4"
+                  style={{ height: "100%" }}
+                >
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <Tabs
                       activeKey={activeTabKey}

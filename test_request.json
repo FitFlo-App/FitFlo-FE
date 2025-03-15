@@ -1,0 +1,1 @@
+{"model": "deepseek/deepseek-r1-zero:free", "messages": [{"role": "system", "content": "Respond with valid JSON"}, {"role": "user", "content": "Create a JSON with name and age"}], "response_format": { "type": "json_object" }}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaMars, FaVenus, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBirthdayCake, FaRulerVertical, FaWeight, FaNotesMedical } from "react-icons/fa";
 import { motion } from "framer-motion";
-import Sidebar from "@/components/sidebar";
+import AppLayout from "@/components/AppLayout";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);

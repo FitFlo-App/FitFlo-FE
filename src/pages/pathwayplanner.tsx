@@ -95,7 +95,7 @@ const PathwayPlanner: React.FC = () => {
           </motion.div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 };
 

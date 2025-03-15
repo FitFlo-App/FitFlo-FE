@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaMars, FaVenus, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBirthdayCake, FaRulerVertical, FaWeight, FaNotesMedical } from "react-icons/fa";
+import { FaEdit, FaMars, FaVenus, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBirthdayCake, FaRulerVertical, FaWeight, FaNotesMedical } from "react-icons/fa";
 import { motion } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 
@@ -155,6 +155,9 @@ const Profile = () => {
                   alt="Profile Picture"
                   className="w-32 h-32 object-cover rounded-full border-4 border-primary shadow-lg"
                 />
+                <button className="absolute bottom-2 right-0 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition-transform hover:scale-110">
+                  <FaEdit className="text-lg" />
+                </button>
               </motion.div>
               {!isEditing ? (
                 <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full space-y-4">

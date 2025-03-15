@@ -3,7 +3,6 @@ import { ReactFlow, Controls, Background, Node, Edge } from '@xyflow/react';
 import { CustomNodeDefault, CustomNodeInput, CustomNodeLeft, CustomNodeLeftChild, CustomNodeRight, CustomNodeRightChild } from '@/components/ui/custom-node';
 import '@xyflow/react/dist/style.css';
 
-
 const nodes: Node[] = [
     { id: '1', type: 'customInput', data: { label: 'Self-Treatment', info: 'Do this everyday for 5 days straight' }, position: { x: 0, y: 0 } },
     { id: '2', type: 'customLeftChild', data: { label: 'Eat high-fiber diet', info: 'Do this everyday for 5 days straight' }, position: { x: -400, y: -100 } },
@@ -51,18 +50,23 @@ const edges: Edge[] = [
 
 const TreatmentPathway: React.FC = () => {
   return (
-    <>
-        <div className='h-screen'>
-            <ReactFlow 
-                nodes={nodes} 
-                edges={edges} 
-                nodeTypes={{customLeft: CustomNodeLeft, customLeftChild: CustomNodeLeftChild, customDefault: CustomNodeDefault, customInput: CustomNodeInput, customRight: CustomNodeRight, customRightChild: CustomNodeRightChild}}
-            >
-                <Background />
-                <Controls />
-            </ReactFlow>
-        </div>
-    </>
+    <div style={{ width: "100%", height: "500px" }} className='h-screen'>
+        <ReactFlow 
+            nodes={nodes} 
+            edges={edges} 
+            nodeTypes={{
+                customLeft: CustomNodeLeft, 
+                customLeftChild: CustomNodeLeftChild, 
+                customDefault: CustomNodeDefault, 
+                customInput: CustomNodeInput, 
+                customRight: CustomNodeRight, 
+                customRightChild: CustomNodeRightChild
+            }}
+        >
+            <Background />
+            <Controls />
+        </ReactFlow>
+    </div>
   );
 };
 

@@ -1,51 +1,124 @@
-# Vite & HeroUI Template
+<!-- INTRO -->
+<br />
+<div align="center">
+  <h1 align="center">Fitflo Frontend</h1>
 
-This is a template for creating applications using Vite and HeroUI (v2).
+  <p align="center">
+    <h3> Welcome to the **FitFlo Frontend** repository! This Frontend provides an intuitive interface for users to manage their health journeys, view personalized AI-driven recommendations, and navigate healthcare options with ease.</h3>
+  </p>
 
-[Try it on CodeSandbox](https://githubbox.com/frontio-ai/vite-template)
+  [![MIT License][license-shield]][license-url]
 
-## Technologies Used
+</div>
 
-- [Vite](https://vitejs.dev/guide/)
-- [HeroUI](https://heroui.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [Framer Motion](https://www.framer.com/motion)
-- [Embla Carousel] (https://www.embla-carousel.com/)
+<!-- CONTRIBUTOR -->
+<div align="center" id="contributor">
+  <strong>
+    <h3>Created by ITB Team:</h3>
+    <table align="center">
+      <tr>
+        <td>Name</td>
+      </tr>
+      <tr>
+        <td>Andhita Naura H.</td>
+     </tr>
+     <tr>
+        <td>Aththriq Lisan Q. D. S.</td>
+    </tr>
+     <tr>
+        <td>Eleanor Cordelia</td>
+    </tr>
+     <tr>
+        <td>Marzuli Suhada M</td>
+    </tr>
+     <tr>
+        <td>Muhammad Faiz A</td>
+    </tr>
+    </table>
+  </strong>
+</div>
 
-## How to Use
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [License](#license)
+   
+## Project Overview
+FitFlo is an AI-powered healthcare pathway planner designed to deliver a seamless and interactive user experience. This front-end, built with React and Vite, provides an intuitive interface for users to manage their health journeys, view personalized AI-driven recommendations, and navigate healthcare options with ease. It integrates visually rich components, smooth animations, and responsive design to enhance usability and engagement.
 
-To clone the project, run the following command:
+FitFlo is deployed on [fitflo.site](https://fitflo.site) and it's API (Back End) deployed on [api.fitflo.site](https://api.fitflo.site)
 
-```bash
-git clone https://github.com/frontio-ai/vite-template.git
-```
+FitFlo Front-End Repository: [https://github.com/FitFlo-App/FitFlo-FE](https://github.com/FitFlo-App/FitFlo-FE)<br>
+FitFlo Back-End Repository: [https://github.com/FitFlo-App/FitFlo-BE](https://github.com/FitFlo-App/FitFlo-BE)
 
-### Install dependencies
+<p align="center">
+  <!-- https://raw.githubusercontent.com/FitFlo-App/FitFlo-FE/main/ -->
+  <img src="assets/screenshots/1.jpg"/>
+  <img src="assets/screenshots/2.jpg"/>
+  <img src="assets/screenshots/3.jpg"/>
+  <img src="assets/screenshots/4.jpg"/>
+  <img src="assets/screenshots/5.jpg"/>
+  <img src="assets/screenshots/6.jpg"/>
+  <img src="assets/screenshots/7.jpg"/>
+  <img src="assets/screenshots/8.jpg"/>
+  <img src="assets/screenshots/9.jpg"/>
+</p>
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+## Tech Stack
+- **Framework & Build Tool**  
+  - React.js for front-end development  
+  - Vite for fast development and optimized builds  
 
-```bash
-npm install
-```
+- **UI Components & Styling**  
+  - **Ant Design** and **Hero UI** for pre-built components  
+  - **Radix UI** for accessible and customizable UI elements  
+  - **Tailwind CSS** for utility-first styling  
+  - **ShadCN UI** for additional UI utilities  
+  - **Lucide React** and **Tabler Icons** for iconography  
 
-### Run the development server
+- **State Management & Routing**  
+  - React Router for client-side navigation  
 
-```bash
-npm run dev
-```
+- **Animations & Interactivity**  
+  - Framer Motion and Motion for smooth animations  
+  - React Flow and XYFlow for interactive visualizations  
 
-### Setup pnpm (optional)
+- **Data Handling & API Calls**  
+  - Axios for making HTTP requests  
+  - Recharts for data visualization  
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+- **Development & Tooling**  
+  - TypeScript for type safety  
+  - ESLint and Prettier for code quality and formatting  
+  - Vite TSConfig Paths for module resolution  
+  - PostCSS and Autoprefixer for CSS processing
 
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
+## Installation
+To set up the Frontend locally:
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/FitFlo-App/FitFlo-FE.git
+   cd FitFlo-FE
+   ```
+
+2. Run development server
+   ```sh
+   npm run dev
+   ```
 
 ## License
+This project is licensed under the MIT License.
 
-Licensed under the [MIT license](https://github.com/frontio-ai/vite-template/blob/main/LICENSE).
+---
+### 🌟 We appreciate your contributions to FitFlo! 
+If you have any questions, feel free to open an issue or contact us.
+
+<br>
+<h3 align="center"> Thank You! </h3>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[license-shield]: https://img.shields.io/github/license/FitFlo-App/FitFlo-FE.svg?style=for-the-badge
+[license-url]: https://github.com/FitFlo-App/FitFlo-FE.git/blob/main/LICENSE

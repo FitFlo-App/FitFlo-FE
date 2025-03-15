@@ -17,6 +17,7 @@ import PersonalCarePage from "@/pages/personalcare";
 import PathwayPlannerPage from "@/pages/pathwayplanner";
 import HealthcarePage from "@/pages/healthcare";
 import CompleteProfile from "@/pages/CompleteProfile";
+import Faq from "@/pages/faq";
 
 // Import Spinner
 
@@ -265,6 +266,16 @@ function App() {
             </ProtectedRoute>
           }
           path="/healthcare"
+        />
+        <Route
+          element={
+            <ProtectedRoute>
+              <LoadingWrapper>
+                <Faq />
+              </LoadingWrapper>
+            </ProtectedRoute>
+          }
+          path="/faq"
         />
       </Routes>
     </ConfigProvider>

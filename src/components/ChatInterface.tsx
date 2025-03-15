@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Input, Button, Select, Card, Divider, Space } from "antd";
+import { Input, Button, Card, Space } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import { InputRef } from "antd/lib/input";
 
@@ -8,8 +8,7 @@ import FileUploader from "./FileUploader";
 import ExamplePrompts from "./ExamplePrompts";
 import { Typewriter } from "./ui/typewriter-text";
 
-const { Option } = Select;
-
+// Define message interface
 export interface Message {
   id: string;
   content: string;
@@ -17,15 +16,7 @@ export interface Message {
   timestamp: Date;
 }
 
-// Define model options
-const modelOptions = [
-  { value: "google-gemma-3-4b", label: "Google Gemma 3 4B" },
-  { value: "deepseek-coder-r1", label: "Deepseek R1 Zero" },
-  { value: "qwen-32b", label: "Qwen QWQ 32B" },
-  { value: "custom-model", label: "Custom Model" },
-];
-
-// Untuk file uploader
+// For file uploader
 interface UploadFile {
   uid: string;
   name: string;
@@ -34,9 +25,8 @@ interface UploadFile {
 }
 
 interface ChatInterfaceProps {
-  onSendMessage: (text: string, modelId: string, files?: File[]) => void;
+  onSendMessage: (text: string, files?: File[]) => void;
   isLoading: boolean;
-  defaultSelected?: string;
 }
 
 // Example prompts to display
@@ -50,10 +40,8 @@ const examplePrompts = [
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onSendMessage,
   isLoading,
-  defaultSelected = "google-gemma-3-4b",
 }) => {
   const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState(defaultSelected);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
@@ -70,7 +58,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (input.trim()) {
       onSendMessage(
         input,
-        selectedModel,
         fileList.map((file) => file.originFileObj)
       );
       setInput("");
@@ -172,22 +159,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         ) : (
           <div>
             <div className="flex items-center border border-gray-300 rounded-xl p-2 bg-white shadow-sm input-container">
-              <Select
-                bordered={false}
-                className="min-w-[160px] mr-1"
-                dropdownMatchSelectWidth={false}
-                value={selectedModel}
-                onChange={(value) => setSelectedModel(value)}
-              >
-                {modelOptions.map((model) => (
-                  <Option key={model.value} value={model.value}>
-                    {model.label}
-                  </Option>
-                ))}
-              </Select>
-
-              <Divider className="h-6 mx-1" type="vertical" />
-
               <Input
                 bordered={false}
                 className="flex-1"

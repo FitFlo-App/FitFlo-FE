@@ -11,6 +11,7 @@ import {
   Space,
   Badge,
   message,
+  Dropdown,
 } from "antd";
 import {
   SendOutlined,
@@ -28,6 +29,7 @@ import {
   PushpinOutlined,
   SearchOutlined,
   UploadOutlined,
+  EllipsisOutlined,
 } from "@ant-design/icons";
 import { RiRobot2Fill } from "react-icons/ri";
 
@@ -175,6 +177,34 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
       // Here you would normally handle the file upload
     }
   };
+
+  // Action menu items for the top left dropdown
+  const actionMenuItems = [
+    {
+      key: "save",
+      icon: <SaveOutlined />,
+      label: "Save Conversation",
+      onClick: () => message.info("Save conversation feature coming soon"),
+    },
+    {
+      key: "export",
+      icon: <ExportOutlined />,
+      label: "Export Conversation",
+      onClick: () => message.info("Export conversation feature coming soon"),
+    },
+    {
+      key: "settings",
+      icon: <SettingOutlined />,
+      label: "Settings",
+      onClick: () => setActiveTab("settings"),
+    },
+    {
+      key: "help",
+      icon: <InfoCircleOutlined />,
+      label: "Help & Resources",
+      onClick: () => setActiveTab("help"),
+    },
+  ];
 
   // Render the main chat panel
   const renderChat = () => (
@@ -679,18 +709,10 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
             <Divider className="my-2 w-full" />
             <Button
               type="text"
-              icon={<SaveOutlined />}
+              icon={<EllipsisOutlined />}
               className="mb-4"
               onClick={() => {
-                message.info("Save conversation feature coming soon");
-              }}
-            />
-            <Button
-              type="text"
-              icon={<ExportOutlined />}
-              className="mb-4"
-              onClick={() => {
-                message.info("Export conversation feature coming soon");
+                setIsExpanded(true);
               }}
             />
           </>
@@ -730,7 +752,7 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
                       : "Help & Resources"}
                 </Title>
               </div>
-              <div className="flex">
+              <div className="flex items-center gap-1">
                 {activeTab === "chat" && (
                   <>
                     <Button
@@ -750,6 +772,17 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
                     />
                   </>
                 )}
+                <Dropdown
+                  menu={{ items: actionMenuItems }}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                >
+                  <Button
+                    type="text"
+                    icon={<EllipsisOutlined />}
+                    className="flex items-center justify-center"
+                  />
+                </Dropdown>
               </div>
             </div>
 

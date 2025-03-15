@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  ReactFlowProvider,
-  Node,
-  Edge,
-} from "@xyflow/react";
-import {
-  Typography,
-  Spin,
-} from "antd";
+import { ReactFlowProvider, Node, Edge } from "@xyflow/react";
+import { Typography, Spin } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
+
 import "@xyflow/react/dist/style.css";
 import PathwayCanvasContent from "./PathwayCanvasContent";
 
@@ -37,7 +31,11 @@ const PathwayCanvas: React.FC<PathwayCanvasProps> = (props) => {
   }
 
   // No data state
-  if (!props.pathwayData || (props.pathwayData.nodes.length === 0 && props.pathwayData.edges.length === 0)) {
+  if (
+    !props.pathwayData ||
+    (props.pathwayData.nodes.length === 0 &&
+      props.pathwayData.edges.length === 0)
+  ) {
     return (
       <div className="flex flex-col justify-center items-center h-full w-full">
         <InfoCircleOutlined
@@ -53,7 +51,14 @@ const PathwayCanvas: React.FC<PathwayCanvasProps> = (props) => {
 
   return (
     <ReactFlowProvider>
-      <div className="pathway-canvas-container absolute inset-0">
+      <div
+        className="pathway-canvas-container absolute inset-0 w-full h-full"
+        style={{
+          backgroundColor: "white",
+          height: "100vh",
+          minHeight: "100vh",
+        }}
+      >
         <PathwayCanvasContent {...props} />
       </div>
     </ReactFlowProvider>

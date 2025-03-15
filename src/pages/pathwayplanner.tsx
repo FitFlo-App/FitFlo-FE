@@ -11,7 +11,7 @@ import { ChatMessage } from "@/components/FloatingChat";
 import { PathwayData } from "@/components/PathwayCanvas";
 
 // Import service
-import PathwayService from "@/services/pathway.service";
+import OpenRouterService from "@/services/openrouter.service";
 
 // UI states
 enum UIState {
@@ -42,11 +42,7 @@ const PathwayPlanner: React.FC = () => {
   const [isResponding, setIsResponding] = useState(false);
 
   // Handle the initial message from the chat interface
-  const handleInitialMessage = async (
-    text: string,
-    modelId: string,
-    files?: File[]
-  ) => {
+  const handleInitialMessage = async (text: string, files?: File[]) => {
     try {
       setIsGenerating(true);
 
@@ -59,8 +55,15 @@ const PathwayPlanner: React.FC = () => {
       };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-      // Call service to generate pathway
-      const result = await PathwayService.generatePathway(text, modelId, files);
+      // Log uploaded files (future feature)
+      if (files && files.length > 0) {
+        console.log(
+          `${files.length} files uploaded, will be processed in a future version`
+        );
+      }
+
+      // Call OpenRouter service to generate pathway
+      const result = await OpenRouterService.generatePathway(text);
 
       // Add assistant response to chat
       setMessages((prevMessages) => [...prevMessages, result.response]);
@@ -102,8 +105,11 @@ const PathwayPlanner: React.FC = () => {
       };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-      // Call service to get response
-      const response = await PathwayService.sendFollowUpMessage(text);
+      // Get all messages for context
+      const allMessages = [...messages, userMessage];
+
+      // Call OpenRouter service to get response
+      const response = await OpenRouterService.sendMessage(allMessages);
 
       // Add assistant response to chat
       setMessages((prevMessages) => [...prevMessages, response]);

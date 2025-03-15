@@ -35,6 +35,7 @@ import {
 } from "@ant-design/icons";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+
 import {
   CustomNodeDefault,
   CustomNodeInput,
@@ -92,9 +93,11 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
     setNodes((nds) => {
       // Apply changes to nodes
       const updatedNodes = [...nds];
+
       changes.forEach((change) => {
         if (change.type === "position" && change.position) {
           const nodeIndex = updatedNodes.findIndex((n) => n.id === change.id);
+
           if (nodeIndex !== -1) {
             updatedNodes[nodeIndex] = {
               ...updatedNodes[nodeIndex],
@@ -103,6 +106,7 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
           }
         }
       });
+
       return updatedNodes;
     });
   }, []);
@@ -162,11 +166,13 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
         // Use the correct method for jsPDF
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(`${exportFilename}.pdf`);
       } else if (exportFormat === "png") {
         const canvas = await html2canvas(flowRef.current);
         const link = document.createElement("a");
+
         link.download = `${exportFilename}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
@@ -174,6 +180,7 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
         const dataStr = JSON.stringify({ nodes, edges });
         const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
         const link = document.createElement("a");
+
         link.download = `${exportFilename}.json`;
         link.href = dataUri;
         link.click();
@@ -226,50 +233,84 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
   ];
 
   return (
-    <div className="absolute inset-0" ref={flowRef}>
+    <div
+      ref={flowRef}
+      className="absolute inset-0 w-full h-full overflow-hidden"
+    >
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        onNodeClick={onNodeClick}
         fitView
         attributionPosition="bottom-left"
+        className="w-full h-full"
+        edges={edges}
+        nodeTypes={nodeTypes}
+        nodes={nodes}
+        style={{ height: "100vh", background: "white" }}
+        onConnect={onConnect}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
+        onNodesChange={onNodesChange}
       >
-        <Background />
+        <Background
+          color="#aaa"
+          gap={16}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: -1,
+            backgroundColor: "white",
+          }}
+        />
         <Controls />
         <MiniMap />
-        <Panel position="top-right" className="pathway-controls">
-          <div className="flex flex-col space-y-2">
-            {toolbarActions.map((action) => (
-              <Tooltip key={action.key} title={action.tooltip} placement="left">
-                <Button
-                  type="default"
-                  icon={action.icon}
-                  onClick={action.onClick}
-                  className="flex items-center"
-                >
-                  <span className="ml-2">{action.text}</span>
-                </Button>
-              </Tooltip>
-            ))}
-          </div>
-          <Text className="mt-4 text-xs text-gray-500">
+
+        {/* Instructional text at top-center */}
+        <Panel className="pathway-instructions" position="top-center">
+          <Text className="text-xs text-gray-500 bg-white bg-opacity-80 backdrop-blur-sm p-2 rounded-lg shadow-sm text-center">
             <InfoCircleOutlined className="mr-1" />
             Click on nodes to view details
           </Text>
         </Panel>
       </ReactFlow>
 
-      {/* Node Detail Modal */}
+      {/* Move action buttons outside of ReactFlow for better positioning */}
+      <div
+        className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50"
+        style={{
+          marginBottom: 0,
+          paddingBottom: 0,
+          width: "auto",
+        }}
+      >
+        <div className="flex flex-row space-x-2 bg-white bg-opacity-80 backdrop-blur-sm p-2 rounded-t-lg shadow-sm">
+          {toolbarActions.map((action) => (
+            <Tooltip key={action.key} placement="top" title={action.tooltip}>
+              <Button
+                className="w-9 h-9 flex items-center justify-center"
+                icon={action.icon}
+                type="text"
+                onClick={action.onClick}
+              >
+                {/* Text removed to match the minimalist style */}
+              </Button>
+            </Tooltip>
+          ))}
+        </div>
+      </div>
+
+      {/* Node Detail Modal - centered vertically */}
       <Modal
-        open={!!selectedNode}
-        onCancel={handleCloseNodeDetails}
-        title={getNodeTitle()}
-        footer={null}
+        centered
         className="node-details-modal"
+        footer={null}
+        open={!!selectedNode}
+        title={getNodeTitle()}
+        width={800}
+        onCancel={handleCloseNodeDetails}
       >
         <div className="node-details-content">
           <Typography>{getNodeInfo()}</Typography>
@@ -277,7 +318,7 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
           <Divider orientation="left">Additional Information</Divider>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card size="small" title="Recommendations" className="bg-blue-50">
+            <Card className="bg-blue-50" size="small" title="Recommendations">
               <Timeline>
                 <Timeline.Item>Consult with Dr. Sarah Johnson</Timeline.Item>
                 <Timeline.Item>Schedule follow-up in 3 weeks</Timeline.Item>
@@ -285,22 +326,40 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
               </Timeline>
             </Card>
 
-            <Card size="small" title="Resources" className="bg-green-50">
+            <Card className="bg-green-50" size="small" title="Resources">
               <Space direction="vertical">
                 <Text>
-                  <a href="#" onClick={(e) => e.preventDefault()}>
+                  <Button
+                    className="p-0"
+                    type="link"
+                    onClick={() =>
+                      message.info("Medical Guide PDF download coming soon")
+                    }
+                  >
                     Medical Guide PDF
-                  </a>
+                  </Button>
                 </Text>
                 <Text>
-                  <a href="#" onClick={(e) => e.preventDefault()}>
+                  <Button
+                    className="p-0"
+                    type="link"
+                    onClick={() =>
+                      message.info("Provider Directory coming soon")
+                    }
+                  >
                     Provider Directory
-                  </a>
+                  </Button>
                 </Text>
                 <Text>
-                  <a href="#" onClick={(e) => e.preventDefault()}>
+                  <Button
+                    className="p-0"
+                    type="link"
+                    onClick={() =>
+                      message.info("Support Group Information coming soon")
+                    }
+                  >
                     Support Group Information
-                  </a>
+                  </Button>
                 </Text>
               </Space>
             </Card>
@@ -308,7 +367,7 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
 
           <Divider orientation="left">Nearby Facilities</Divider>
 
-          <Card size="small" className="mb-4">
+          <Card className="mb-4" size="small">
             <Space direction="vertical">
               <div className="flex justify-between">
                 <Text strong>Memorial Hospital</Text>
@@ -342,33 +401,33 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
 
       {/* Compare Drawer */}
       <Drawer
-        title="Compare Pathways"
-        placement="right"
-        width={600}
         open={compareDrawerVisible}
+        placement="right"
+        title="Compare Pathways"
+        width={600}
         onClose={() => setCompareDrawerVisible(false)}
       >
-        <Space direction="vertical" className="w-full">
-          <Card title="Standard Pathway" className="mb-4">
+        <Space className="w-full" direction="vertical">
+          <Card className="mb-4" title="Standard Pathway">
             <p>
               This is the standard recommended pathway for patients with similar
               conditions.
             </p>
             <div className="flex justify-between mt-2">
-              <Button type="primary" size="small">
+              <Button size="small" type="primary">
                 View Details
               </Button>
               <Button size="small">Apply This Pathway</Button>
             </div>
           </Card>
 
-          <Card title="Alternative Pathway" className="mb-4">
+          <Card className="mb-4" title="Alternative Pathway">
             <p>
               An alternative approach with different treatment options and
               timeline.
             </p>
             <div className="flex justify-between mt-2">
-              <Button type="primary" size="small">
+              <Button size="small" type="primary">
                 View Details
               </Button>
               <Button size="small">Apply This Pathway</Button>
@@ -379,19 +438,22 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
 
       {/* Export Modal */}
       <Modal
-        title="Export Pathway"
+        okText="Export"
         open={exportModalVisible}
+        title="Export Pathway"
         onCancel={() => setExportModalVisible(false)}
         onOk={handleExport}
-        okText="Export"
       >
         <div className="space-y-4">
           <div>
-            <label className="block mb-2">Export Format</label>
+            <label className="block mb-2" htmlFor="export-format">
+              Export Format
+            </label>
             <Select
+              id="export-format"
+              style={{ width: "100%" }}
               value={exportFormat}
               onChange={setExportFormat}
-              style={{ width: "100%" }}
             >
               <Option value="pdf">PDF Document</Option>
               <Option value="png">PNG Image</Option>
@@ -400,11 +462,14 @@ const PathwayCanvasContent: React.FC<PathwayCanvasContentProps> = ({
           </div>
 
           <div>
-            <label className="block mb-2">Filename</label>
+            <label className="block mb-2" htmlFor="export-filename">
+              Filename
+            </label>
             <Input
+              id="export-filename"
+              suffix={`.${exportFormat}`}
               value={exportFilename}
               onChange={(e) => setExportFilename(e.target.value)}
-              suffix={`.${exportFormat}`}
             />
           </div>
         </div>

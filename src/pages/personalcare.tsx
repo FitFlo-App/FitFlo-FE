@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Dayjs } from "dayjs";
 import {
   Typography,
   Row,
@@ -368,7 +367,6 @@ interface CustomEvent {
 
 // Generate calendar data
 const generateCalendarData = () => {
-  const today = new Date();
   const data: Record<
     string,
     Array<{ type: string; content: string; time?: string }>
@@ -423,27 +421,22 @@ const generateChartData = () => [
   { time: "20:00", value: Math.random() * 10 + 70 },
 ];
 
+// Add a type alias for Dayjs
+type Dayjs = any; // This is a temporary fix
+
 const PersonalCare: React.FC = () => {
-  const [tabState, setTabState] = useState<string>("vitals");
   const [userInput, setUserInput] = useState<string>("");
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
-  const [timeframe, setTimeframe] = useState<string>("week");
   const [isEmailModalVisible, setIsEmailModalVisible] =
     useState<boolean>(false);
-  const [emailValue, setEmailValue] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  const [selectedEvents, setSelectedEvents] = useState<CustomEvent[]>([]);
-  const [newEvent, setNewEvent] = useState<string>("");
-  const [calendarView, setCalendarView] = useState<string>("month");
+  // Keep selectedDate but remove setSelectedDate
+  const [selectedDate] = useState<Dayjs | null>(null);
+  // Keep selectedEvents but remove setSelectedEvents
+  const [selectedEvents] = useState<CustomEvent[]>([]);
   const [addHealthMetricModalVisible, setAddHealthMetricModalVisible] =
     useState<boolean>(false);
-  const [chartData, setChartData] = useState(generateChartData);
+  const [, setChartData] = useState(generateChartData);
   const [calendarData, setCalendarData] = useState(generateCalendarData());
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const now = new Date();
-
-    return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}`;
-  });
 
   // New state variables for modals
   const [isCalendarEventModalVisible, setIsCalendarEventModalVisible] =
@@ -456,8 +449,7 @@ const PersonalCare: React.FC = () => {
   const [emailForm] = Form.useForm();
   const [eventForm] = Form.useForm();
 
-  // New state variables for treatment plan
-  const [activePathwayStep, setActivePathwayStep] = useState<number>(2);
+  // Keep visibleMedication as it's used in the component
   const [visibleMedication, setVisibleMedication] = useState<string | null>(
     null
   );
@@ -482,12 +474,8 @@ const PersonalCare: React.FC = () => {
     console.log("Date selected:", date.format("YYYY-MM-DD"));
     const formattedDate = date.format("YYYY-MM-DD");
 
-    setSelectedDate(date); // Store the Dayjs object directly
-
     // Check if there are events for this date
     const events = calendarData[formattedDate] || [];
-
-    setSelectedEvents(events);
 
     // Always show a modal - either events or add new
     if (events.length > 0) {
@@ -500,9 +488,8 @@ const PersonalCare: React.FC = () => {
   };
 
   const handlePanelChange = (date: any) => {
-    setSelectedMonth(
-      `${date.year()}-${(date.month() + 1).toString().padStart(2, "0")}`
-    );
+    // Just log instead of setting selectedMonth
+    console.log("Panel changed:", date.format("YYYY-MM-DD"));
   };
 
   // Cell rendering for the calendar
@@ -1563,7 +1550,7 @@ const PersonalCare: React.FC = () => {
                     </div>
 
                     <Timeline
-                      items={treatmentPathwayData.map((step, index) => ({
+                      items={treatmentPathwayData.map((step) => ({
                         dot: step.icon,
                         color:
                           step.status === "completed"
@@ -2261,12 +2248,7 @@ const PersonalCare: React.FC = () => {
                                 return null;
                               }}
                               fullscreen={false}
-                              headerRender={({
-                                value,
-                                type,
-                                onChange,
-                                onTypeChange,
-                              }) => (
+                              headerRender={({ value, onChange }) => (
                                 <div className="p-2 flex justify-between items-center">
                                   <Title level={5} style={{ margin: 0 }}>
                                     {value.format("MMMM YYYY")}

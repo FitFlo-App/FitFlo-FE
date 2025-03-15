@@ -95,7 +95,7 @@ const generateRating = () => {
 };
 
 // Function to determine the busy level based on time (mock data)
-const getBusyLevel = (facility: any) => {
+const getBusyLevel = () => {
   // This would be based on real-time data in a real application
   const random = Math.floor(Math.random() * 3);
 
@@ -724,7 +724,7 @@ const HealthcarePage = () => {
   }
 
   const renderFacilityCard = (facility: any, index: number) => {
-    const busyLevel = getBusyLevel(facility);
+    const busyLevel = getBusyLevel();
     const isFavorite = favorites.includes(facility.name);
 
     return (
@@ -933,7 +933,7 @@ const HealthcarePage = () => {
 
   // Render facility list item (for list view)
   const renderFacilityListItem = (facility: any) => {
-    const busyLevel = getBusyLevel(facility);
+    const busyLevel = getBusyLevel();
     const isFavorite = favorites.includes(facility.name);
 
     return (
@@ -1408,7 +1408,7 @@ const HealthcarePage = () => {
                       dataSource={filteredData}
                       itemLayout="vertical"
                       pagination={{
-                        onChange: (page) => {
+                        onChange: () => {
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         },
                         pageSize: 5,

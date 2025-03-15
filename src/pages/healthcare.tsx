@@ -1,4 +1,33 @@
 import { useState } from "react";
+import {
+  Input,
+  Button,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Tag,
+  Space,
+  Collapse,
+  Divider,
+  Rate,
+  Badge,
+  Tooltip,
+  Select,
+  Empty,
+} from "antd";
+import {
+  SearchOutlined,
+  FilterOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  PhoneOutlined,
+  HeartOutlined,
+  DollarOutlined,
+  MedicineBoxOutlined,
+  CheckCircleOutlined,
+  BankOutlined,
+} from "@ant-design/icons";
 import { motion } from "framer-motion";
 
 import FilterButtonGroup from "@/components/ui/filter-button";
@@ -10,6 +39,38 @@ import PHC2 from "@/assets/phc2.jpg";
 import Lab1 from "@/assets/lab1.jpg";
 import Lab2 from "@/assets/lab2.jpg";
 import AppLayout from "@/components/AppLayout";
+
+const { Title, Text, Paragraph } = Typography;
+const { Panel } = Collapse;
+const { Option } = Select;
+
+// Helper function to get a color based on health care type
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case "Hospital":
+      return "blue";
+    case "Public Health Center":
+      return "green";
+    case "Laboratory":
+      return "purple";
+    default:
+      return "default";
+  }
+};
+
+// Helper function to get an icon based on health care type
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "Hospital":
+      return <MedicineBoxOutlined />;
+    case "Public Health Center":
+      return <BankOutlined />;
+    case "Laboratory":
+      return <HeartOutlined />;
+    default:
+      return null;
+  }
+};
 
 const healthcare_facility = [
   {
@@ -462,6 +523,8 @@ const HealthcarePage = () => {
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<string>("name");
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -485,7 +548,12 @@ const HealthcarePage = () => {
     setIsFilterVisible((prev) => !prev);
   };
 
-  const filteredData = healthcare_facility.filter(
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
+  };
+
+  // Filter and sort facilities
+  let filteredData = healthcare_facility.filter(
     (facility) =>
       (selectedTypes.length === 0 ||
         selectedTypes.includes(facility.healthcare_type)) &&
@@ -496,84 +564,255 @@ const HealthcarePage = () => {
       facility.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Sort data
+  if (sortBy === "name") {
+    filteredData = [...filteredData].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  } else if (sortBy === "city") {
+    filteredData = [...filteredData].sort((a, b) =>
+      a.city.localeCompare(b.city)
+    );
+  }
+
   return (
     <AppLayout>
-      <div className="p-8">
-        <h1 className="text-2xl font-bold text-gray-900 my-6">
-          Healthcare Facilities
-        </h1>
-
-        <div className="flex justify-between items-center mb-4">
-          {/* Search Bar */}
-          <input
-            className="w-full max-w-[80%] p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Search healthcare facility..."
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-
-          {/* Filter Button */}
-          <button
-            className="ml-4 px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-all"
-            onClick={toggleFilterVisibility}
-          >
-            <span className="hidden sm:inline">
-              {isFilterVisible ? "Hide Filters" : "Show Filters"}
-            </span>
-            <span className="inline sm:hidden">Filters</span>
-          </button>
+      <div className="p-4 md:p-6">
+        <div className="mb-6">
+          <Title level={2} className="mb-1">
+            Healthcare Facilities
+          </Title>
+          <Text type="secondary">
+            Find the best healthcare facilities near you
+          </Text>
         </div>
 
-        <motion.div
-          animate={{
-            height: isFilterVisible ? "auto" : 0,
-            opacity: isFilterVisible ? 1 : 0,
-          }}
-          className="overflow-hidden"
-          initial={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <FilterButtonGroup
-            options={healthcareTypes}
-            selectedOptions={selectedTypes}
-            title="Type"
-            onChange={handleTypeFilterChange}
-          />
-
-          <FilterButtonGroup
-            options={paymentOptions}
-            selectedOptions={selectedPayments}
-            title="Payment"
-            onChange={handlePaymentFilterChange}
-          />
-        </motion.div>
-
-        <div className="grid py-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filteredData.map((facility, index) => (
-            <motion.div
-              key={facility.name}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden p-4"
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <img
-                alt={facility.name}
-                className="w-full h-40 object-cover rounded-md"
-                src={facility.picture}
+        <Card className="mb-6 shadow-md">
+          <Row gutter={[16, 16]} align="middle">
+            <Col xs={24} md={12} lg={14}>
+              <Input
+                placeholder="Search healthcare facilities..."
+                prefix={<SearchOutlined />}
+                size="large"
+                allowClear
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
-              <h3 className="text-lg font-semibold mt-2">{facility.name}</h3>
-              <p className="text-sm text-gray-600">
-                {facility.city}, {facility.country}
-              </p>
-              <p className="text-sm text-gray-500">{facility.address}</p>
-              <p className="text-sm mt-2">
-                Open: {facility.open_hour} - {facility.close_hour}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+            </Col>
+            <Col xs={12} md={6} lg={5}>
+              <Select
+                placeholder="Sort by"
+                style={{ width: "100%" }}
+                size="large"
+                value={sortBy}
+                onChange={handleSortChange}
+              >
+                <Option value="name">Name</Option>
+                <Option value="city">City</Option>
+              </Select>
+            </Col>
+            <Col xs={12} md={6} lg={5}>
+              <Button
+                type="primary"
+                icon={<FilterOutlined />}
+                onClick={toggleFilterVisibility}
+                size="large"
+                block
+              >
+                {isFilterVisible ? "Hide Filters" : "Show Filters"}
+              </Button>
+            </Col>
+          </Row>
+
+          <motion.div
+            animate={{
+              height: isFilterVisible ? "auto" : 0,
+              opacity: isFilterVisible ? 1 : 0,
+              marginTop: isFilterVisible ? 16 : 0,
+            }}
+            className="overflow-hidden"
+            initial={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Divider orientation="left">Filter Options</Divider>
+
+            <Row gutter={[24, 16]}>
+              <Col xs={24} md={12}>
+                <Text strong>Facility Type</Text>
+                <div className="mt-2">
+                  <Space size={[8, 16]} wrap>
+                    {healthcareTypes.map((type) => (
+                      <Tag.CheckableTag
+                        key={type}
+                        checked={selectedTypes.includes(type)}
+                        onChange={() => handleTypeFilterChange(type)}
+                        className="py-1 px-3 border rounded-md"
+                        style={{
+                          backgroundColor: selectedTypes.includes(type)
+                            ? `var(--ant-color-${getTypeColor(type)}-2)`
+                            : "white",
+                          borderColor: selectedTypes.includes(type)
+                            ? `var(--ant-color-${getTypeColor(type)}-5)`
+                            : "#d9d9d9",
+                        }}
+                      >
+                        <Space>
+                          {getTypeIcon(type)}
+                          <span>{type}</span>
+                        </Space>
+                      </Tag.CheckableTag>
+                    ))}
+                  </Space>
+                </div>
+              </Col>
+              <Col xs={24} md={12}>
+                <Text strong>Payment Options</Text>
+                <div className="mt-2">
+                  <Space size={[8, 16]} wrap>
+                    {paymentOptions.map((payment) => (
+                      <Tag.CheckableTag
+                        key={payment}
+                        checked={selectedPayments.includes(payment)}
+                        onChange={() => handlePaymentFilterChange(payment)}
+                        className="py-1 px-3 border rounded-md"
+                        style={{
+                          backgroundColor: selectedPayments.includes(payment)
+                            ? "#f0f5ff"
+                            : "white",
+                          borderColor: selectedPayments.includes(payment)
+                            ? "#1890ff"
+                            : "#d9d9d9",
+                        }}
+                      >
+                        <Space>
+                          {payment.includes("Cash") && <DollarOutlined />}
+                          {payment.includes("Card") && <PhoneOutlined />}
+                          {payment.includes("Insurance") ||
+                          payment === "BPJS" ? (
+                            <CheckCircleOutlined />
+                          ) : null}
+                          <span>{payment}</span>
+                        </Space>
+                      </Tag.CheckableTag>
+                    ))}
+                  </Space>
+                </div>
+              </Col>
+            </Row>
+          </motion.div>
+        </Card>
+
+        {filteredData.length === 0 ? (
+          <Empty
+            description="No healthcare facilities found matching your criteria"
+            className="my-12"
+          />
+        ) : (
+          <Row gutter={[16, 16]}>
+            {filteredData.map((facility, index) => (
+              <Col
+                xs={24}
+                sm={12}
+                lg={8}
+                xl={6}
+                key={`${facility.name}-${index}`}
+              >
+                <motion.div
+                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card
+                    hoverable
+                    cover={
+                      <div className="relative">
+                        <img
+                          alt={facility.name}
+                          src={facility.picture}
+                          className="h-48 w-full object-cover"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <Tag color={getTypeColor(facility.healthcare_type)}>
+                            <Space>
+                              {getTypeIcon(facility.healthcare_type)}
+                              {facility.healthcare_type}
+                            </Space>
+                          </Tag>
+                        </div>
+                        {facility.type && (
+                          <Badge
+                            count={`Type ${facility.type}`}
+                            className="absolute top-2 left-2"
+                            style={{
+                              backgroundColor: "#2f54eb",
+                              fontSize: "12px",
+                              padding: "0 8px",
+                            }}
+                          />
+                        )}
+                      </div>
+                    }
+                    className="h-full shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <Title level={5}>{facility.name}</Title>
+                    <Space direction="vertical" size={1} className="w-full">
+                      <Text type="secondary">
+                        <Space>
+                          <EnvironmentOutlined />
+                          {facility.city}, {facility.country}
+                        </Space>
+                      </Text>
+                      <Paragraph className="mb-1" ellipsis={{ rows: 2 }}>
+                        {facility.address}
+                      </Paragraph>
+
+                      <Space className="mt-2">
+                        <ClockCircleOutlined />
+                        <Text>
+                          {facility.open_hour} - {facility.close_hour}
+                        </Text>
+                      </Space>
+
+                      <Divider className="my-2" />
+
+                      <Collapse ghost className="ant-collapse-borderless">
+                        <Panel header="Services & Facilities" key="1">
+                          <Space size={[4, 8]} wrap>
+                            {[
+                              ...(facility.services || []),
+                              ...(facility.facilities || []),
+                            ]
+                              .slice(0, 5)
+                              .map((item, i) => (
+                                <Tag key={i} color="blue">
+                                  {item}
+                                </Tag>
+                              ))}
+                            {[
+                              ...(facility.services || []),
+                              ...(facility.facilities || []),
+                            ].length > 5 && (
+                              <Tooltip title="More services available">
+                                <Tag color="blue">
+                                  +
+                                  {[
+                                    ...(facility.services || []),
+                                    ...(facility.facilities || []),
+                                  ].length - 5}{" "}
+                                  more
+                                </Tag>
+                              </Tooltip>
+                            )}
+                          </Space>
+                        </Panel>
+                      </Collapse>
+                    </Space>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        )}
       </div>
     </AppLayout>
   );

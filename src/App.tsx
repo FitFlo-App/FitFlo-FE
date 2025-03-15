@@ -19,7 +19,7 @@ import HealthcarePage from "@/pages/healthcare";
 import CompleteProfile from "@/pages/CompleteProfile";
 import Faq from "@/pages/faq";
 import Settings from "@/pages/settings";
-import TreatmentPathway from "@/pages/pathway_graph";
+import TreatmentPathway from "@/components/TreatmentPathway";
 
 // Import Spinner
 

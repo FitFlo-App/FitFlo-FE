@@ -1,112 +1,167 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { motion } from "framer-motion";
-import { Send } from "lucide-react";
-import Card from "@/components/ui/card";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
-import TreatmentPathway from "@/components/TreatmentPathway"; 
+import { v4 as uuidv4 } from "uuid";
+import { message } from "antd";
 
-const initialMessages = [{ sender: "bot", text: "How are you feeling today?" }];
+// Import custom components
+import ChatInterface from "@/components/ChatInterface";
+import FloatingChat from "@/components/FloatingChat";
+import PathwayCanvas from "@/components/PathwayCanvas";
+import { ChatMessage } from "@/components/FloatingChat";
+import { PathwayData } from "@/components/PathwayCanvas";
+
+// Import service
+import PathwayService from "@/services/pathway.service";
+
+// UI states
+enum UIState {
+  INITIAL_CHAT = "initial_chat",
+  PATHWAY_VIEW = "pathway_view",
+}
 
 const PathwayPlanner: React.FC = () => {
-  const [messages, setMessages] = useState(initialMessages);
-  const [userInput, setUserInput] = useState("");
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  // State for UI flow
+  const [uiState, setUiState] = useState<UIState>(UIState.INITIAL_CHAT);
 
-  const handleSendMessage = () => {
-    if (userInput.trim() === "") return;
+  // State for chat
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: uuidv4(),
+      content:
+        "Hello! I'm your health pathway assistant. Start by sharing your health needs today.",
+      role: "assistant",
+      timestamp: new Date(),
+    },
+  ]);
 
-    const newMessage = { sender: "user", text: userInput };
-    setMessages((prev) => [...prev, newMessage]);
-    setUserInput("");
+  // State for pathway data
+  const [pathwayData, setPathwayData] = useState<PathwayData | null>(null);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: generateBotResponse(userInput) },
-      ]);
-    }, 1000);
+  // Loading states
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isResponding, setIsResponding] = useState(false);
+
+  // Handle the initial message from the chat interface
+  const handleInitialMessage = async (
+    text: string,
+    modelId: string,
+    files?: File[]
+  ) => {
+    try {
+      setIsGenerating(true);
+
+      // Add user message to chat
+      const userMessage: ChatMessage = {
+        id: uuidv4(),
+        content: text,
+        role: "user",
+        timestamp: new Date(),
+      };
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+      // Call service to generate pathway
+      const result = await PathwayService.generatePathway(text, modelId, files);
+
+      // Add assistant response to chat
+      setMessages((prevMessages) => [...prevMessages, result.response]);
+
+      // Set pathway data
+      setPathwayData(result.pathway);
+
+      // Change UI state to pathway view
+      setUiState(UIState.PATHWAY_VIEW);
+    } catch (error) {
+      console.error("Error generating pathway:", error);
+      message.error("Failed to generate pathway. Please try again.");
+
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        id: uuidv4(),
+        content:
+          "Sorry, I encountered an error while generating your pathway. Please try again.",
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Handle follow-up messages after pathway is generated
+  const handleFollowUpMessage = async (text: string) => {
+    try {
+      setIsResponding(true);
 
-  const generateBotResponse = (input: string) => {
-    if (input.toLowerCase().includes("tired"))
-      return "Make sure to get enough rest and stay hydrated!";
-    if (input.toLowerCase().includes("happy"))
-      return "That's great! Keep spreading positivity!";
-    if (input.toLowerCase().includes("stressed"))
-      return "Try taking deep breaths and relaxing for a moment.";
-    return "I see. Would you like to talk more about it?";
+      // Add user message to chat
+      const userMessage: ChatMessage = {
+        id: uuidv4(),
+        content: text,
+        role: "user",
+        timestamp: new Date(),
+      };
+      setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+      // Call service to get response
+      const response = await PathwayService.sendFollowUpMessage(text);
+
+      // Add assistant response to chat
+      setMessages((prevMessages) => [...prevMessages, response]);
+    } catch (error) {
+      console.error("Error sending follow-up message:", error);
+      message.error("Failed to send message. Please try again.");
+
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        id: uuidv4(),
+        content:
+          "Sorry, I encountered an error while processing your message. Please try again.",
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      setIsResponding(false);
+    }
+  };
+
+  // Render different UI based on state
+  const renderContent = () => {
+    switch (uiState) {
+      case UIState.INITIAL_CHAT:
+        return (
+          <div className="flex items-center justify-center h-full">
+            <ChatInterface
+              onSendMessage={handleInitialMessage}
+              isLoading={isGenerating}
+            />
+          </div>
+        );
+
+      case UIState.PATHWAY_VIEW:
+        return (
+          <div className="absolute inset-0 overflow-hidden">
+            <PathwayCanvas pathwayData={pathwayData} isLoading={isGenerating} />
+            <FloatingChat
+              messages={messages}
+              onSendMessage={handleFollowUpMessage}
+              isLoading={isResponding}
+            />
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
     <AppLayout>
-      <div className="bg-h-screen min-h-screen p-6 flex flex-col">
-        <h1 className="text-2xl font-bold text-gray-700 mb-4">Pathway Planner</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 flex-1 gap-6">
-          <div className="bg-white shadow-lg rounded-lg p-4 flex items-center justify-center h-full w-full">
-            <TreatmentPathway />
-          </div>
-
-          <div className="flex flex-col h-full">
-            <Card className="flex-1 flex flex-col bg-white shadow-lg rounded-lg">
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((msg, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className={`flex items-end ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    {msg.sender === "bot" && (
-                      <div className="w-12 h-12 mr-2 rounded-full bg-primary flex items-center justify-center">
-                        <img
-                          src="src/assets/axolots.svg"
-                          alt="Bot"
-                          width={48}
-                          height={48}
-                          className="object-contain"
-                        />
-                      </div>
-                    )}
-                    <div
-                      className={`p-3 max-w-xs shadow-md relative ${
-                        msg.sender === "user"
-                          ? "bg-primary text-white rounded-lg"
-                          : "bg-gray-300 text-black rounded-lg"
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
-                  </motion.div>
-                ))}
-                <div ref={chatEndRef}></div>
-              </div>
-            </Card>
-
-            <div className="mt-4 flex items-center">
-              <Input
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Type your response..."
-                className="flex-1 mr-2 p-2 border rounded-lg shadow-md"
-              />
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button
-                  onClick={handleSendMessage}
-                  className="p-2 bg-blue-500 text-white rounded-full shadow-lg"
-                >
-                  <Send size={20} />
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-        </div>
+      {/* Apply special class only for pathway view to override AppLayout padding */}
+      <div
+        className={`h-screen overflow-hidden ${uiState === UIState.PATHWAY_VIEW ? "pathway-view-container" : ""}`}
+      >
+        {renderContent()}
       </div>
     </AppLayout>
   );

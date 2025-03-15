@@ -270,7 +270,7 @@ const HealthAnatomy = () => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      <Card className="bg-white p-6 shadow-lg card-hover-effect">
+      <Card className="bg-white p-6 shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <Title className="mb-0" level={3}>
             Interactive Health Anatomy
@@ -282,14 +282,14 @@ const HealthAnatomy = () => {
         <div className="health-anatomy-image-container">
           <img
             alt="Human Anatomy"
-            className="health-anatomy-image animate-float"
+            className="health-anatomy-image"
             src="/humanbody.png"
           />
 
           {buttonPositions.map((item) => (
             <Tooltip key={item.key} title={`View ${item.label} health metrics`}>
               <Button
-                className={`absolute ${item.position} health-metric-button`}
+                className={`absolute ${item.position} transition-transform hover:scale-110 duration-200`}
                 icon={
                   healthMetrics[item.key as keyof typeof healthMetrics].icon
                 }

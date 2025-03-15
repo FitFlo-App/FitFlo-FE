@@ -1,9 +1,14 @@
 import React from "react";
-import { Card } from "./ui/card";
-import { RobotOutlined, BulbOutlined } from "@ant-design/icons";
+import {
+  RobotOutlined,
+  BulbOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
 import { List, Typography, Tag, Divider, Button } from "antd";
 
-const { Paragraph, Text } = Typography;
+import { Card } from "./ui/card";
+
+const { Paragraph, Text, Title } = Typography;
 
 interface HealthInsight {
   id: string;
@@ -115,13 +120,13 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
   return (
     <div className="space-y-6">
       <Card
+        className="bg-white"
         title={
           <div className="flex items-center">
             <RobotOutlined className="mr-2 text-blue-500" />
             <span>AI-Powered Health Insights</span>
           </div>
         }
-        className="bg-white"
       >
         <Paragraph className="text-gray-600 mb-4">
           Based on your recent health data, our AI has identified the following
@@ -129,11 +134,12 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
         </Paragraph>
 
         <List
-          itemLayout="horizontal"
           dataSource={insights}
+          itemLayout="horizontal"
           renderItem={(item) => (
             <List.Item>
               <List.Item.Meta
+                description={item.description}
                 title={
                   <div className="flex items-center justify-between">
                     <Text strong>{item.title}</Text>
@@ -144,7 +150,6 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
                     </Tag>
                   </div>
                 }
-                description={item.description}
               />
             </List.Item>
           )}
@@ -156,13 +161,13 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
       </Card>
 
       <Card
+        className="bg-white"
         title={
           <div className="flex items-center">
             <BulbOutlined className="mr-2 text-yellow-500" />
             <span>Personalized Recommendations</span>
           </div>
         }
-        className="bg-white"
       >
         <Paragraph className="text-gray-600 mb-4">
           Based on your health data and insights, here are some personalized
@@ -170,8 +175,8 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
         </Paragraph>
 
         <List
-          itemLayout="horizontal"
           dataSource={recommendations}
+          itemLayout="horizontal"
           renderItem={(item) => (
             <List.Item>
               <List.Item.Meta
@@ -180,6 +185,7 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
                     {getCategoryIcon(item.category)}
                   </div>
                 }
+                description={item.description}
                 title={
                   <div className="flex items-center justify-between">
                     <Text strong>{item.title}</Text>
@@ -190,7 +196,6 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
                     </Tag>
                   </div>
                 }
-                description={item.description}
               />
             </List.Item>
           )}
@@ -199,7 +204,7 @@ const HealthInsights: React.FC<HealthInsightsProps> = ({
         <Divider />
 
         <div className="flex justify-between items-center">
-          <Text type="secondary">Updated 2 hours ago</Text>
+          <Button icon={<CalendarOutlined />}>Schedule Consultation</Button>
           <Button type="primary">Apply Recommendations</Button>
         </div>
       </Card>

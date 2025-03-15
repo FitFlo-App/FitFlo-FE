@@ -19,6 +19,7 @@ import HealthcarePage from "@/pages/healthcare";
 import CompleteProfile from "@/pages/CompleteProfile";
 import Faq from "@/pages/faq";
 import Settings from "@/pages/settings";
+import TreatmentPathway from "@/pages/pathway_graph";
 
 // Import Spinner
 
@@ -193,6 +194,7 @@ function App() {
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
         <Route element={<ForgetPasswordPage />} path="/forgetpassword" />
+        <Route element={<TreatmentPathway />} path="/pathwaygraph" />
         <Route element={<MilestonesPage />} path="/milestones" />
 
         {/* OAuth callback route - invisible processor */}

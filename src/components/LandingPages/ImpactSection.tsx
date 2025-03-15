@@ -59,6 +59,7 @@ const ImpactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Ensure component is mounted before animations run
   useEffect(() => {
     setIsMounted(true);
 

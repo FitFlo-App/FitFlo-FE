@@ -214,7 +214,7 @@ const healthMetrics = {
 // Blood research data
 const bloodResearchData = {
   bloodType: "AB (Rh) Rh-",
-  date: "10.02.2022",
+  date: "10.02.2025",
   results: [
     { name: "Hemoglobin", value: 14.2, unit: "g/dL", status: "normal" },
     { name: "Platelets", value: 250, unit: "x10^9/L", status: "normal" },
@@ -245,23 +245,23 @@ const bmiData = {
 // Health certificates data
 const certificatesData = [
   {
-    name: "COVID-19 Vaccination",
-    date: "04.19.2022",
-    file: "covid_vaccination.pdf",
+    name: "Annual Physical Examination",
+    date: "04.19.2025",
+    file: "physical_examination.pdf",
   },
-  { name: "COVID-19 Test", date: "04.07.2022", file: "covid_test.pdf" },
+  { name: "Blood Test Results", date: "04.07.2025", file: "blood_test.pdf" },
   {
     name: "Annual Health Checkup",
-    date: "03.15.2022",
+    date: "03.15.2025",
     file: "health_checkup.pdf",
   },
 ];
 
 // Upcoming appointments
 const appointmentsData = [
-  { id: 1, title: "Family doctor visit", date: "15.07.2022", time: "14:30" },
-  { id: 2, title: "Dental checkup", date: "22.07.2022", time: "09:15" },
-  { id: 3, title: "Eye examination", date: "28.07.2022", time: "11:00" },
+  { id: 1, title: "Family doctor visit", date: "15.07.2025", time: "14:30" },
+  { id: 2, title: "Dental checkup", date: "22.07.2025", time: "09:15" },
+  { id: 3, title: "Eye examination", date: "28.07.2025", time: "11:00" },
 ];
 
 // Treatment plan/pathway data
@@ -390,10 +390,10 @@ const generateCalendarData = () => {
 
   // Add some mock health events
   const mockEvents = [
-    { date: "2022-07-05", type: "medication", content: "Took medication" },
-    { date: "2022-07-10", type: "exercise", content: "30 min jogging" },
+    { date: "2025-07-05", type: "medication", content: "Took medication" },
+    { date: "2025-07-10", type: "exercise", content: "30 min jogging" },
     {
-      date: "2022-07-12",
+      date: "2025-07-12",
       type: "measurement",
       content: "Blood pressure check",
     },
@@ -3388,6 +3388,16 @@ const PersonalCare: React.FC = () => {
           
           .modern-calendar .ant-picker-calendar-header {
             padding: 8px 0;
+          }
+          
+          /* Add margin to the Month/Year toggle buttons */
+          .modern-calendar .ant-picker-calendar-mode-switcher {
+            margin-right: 12px;
+          }
+          
+          /* Alternative selector for the Month/Year toggle */
+          .modern-calendar .ant-radio-group {
+            margin-right: 12px;
           }
           
           /* Calendar cells */

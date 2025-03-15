@@ -21,6 +21,7 @@ import {
   Tag,
   Tooltip,
   Skeleton,
+  Flex,
 } from "antd";
 import {
   LockOutlined,
@@ -41,7 +42,6 @@ import {
   InfoCircleOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import { motion } from "framer-motion";
 
 import AppLayout from "@/components/AppLayout";
 
@@ -332,32 +332,34 @@ const SettingsPage = () => {
     >
       <AppLayout>
         <div className="px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-8 md:py-10 bg-gradient-to-b from-blue-50 to-transparent min-h-screen">
-          <motion.div
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-7xl mx-auto"
-            initial={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="mb-8 flex items-center">
-              <SettingOutlined className="text-2xl mr-3 text-blue-500" />
-              <Title className="mb-0" level={2}>
-                Settings
-              </Title>
-            </div>
-            <Paragraph className="text-gray-500 mb-8 max-w-3xl">
-              Manage your account settings and preferences. Changes made here
-              will be applied to your account across all services.
-            </Paragraph>
-          </motion.div>
-
           <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <Flex align="center" gap="small" style={{ marginBottom: 0 }}>
+                <SettingOutlined
+                  className="text-2xl text-blue-500"
+                  style={{ display: "inline-flex" }}
+                />
+                <Typography.Title
+                  className="leading-none"
+                  level={2}
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    display: "inline-block",
+                  }}
+                >
+                  Settings
+                </Typography.Title>
+              </Flex>
+              <Paragraph className="text-gray-500 mt-4 max-w-3xl">
+                Manage your account settings and preferences. Changes made here
+                will be applied to your account across all services.
+              </Paragraph>
+            </div>
+
             <Row gutter={[24, 24]}>
               <Col lg={6} sm={24} xs={24}>
-                <motion.div
-                  animate={{ opacity: 1, x: 0 }}
-                  initial={{ opacity: 0, x: -20 }}
-                  transition={{ delay: 0.1, duration: 0.5 }}
-                >
+                <div>
                   <Card className="shadow-md sticky top-24">
                     <Tabs
                       activeKey={activeTab}
@@ -407,15 +409,11 @@ const SettingsPage = () => {
                       />
                     </Tabs>
                   </Card>
-                </motion.div>
+                </div>
               </Col>
 
               <Col lg={18} sm={24} xs={24}>
-                <motion.div
-                  animate={{ opacity: 1, x: 0 }}
-                  initial={{ opacity: 0, x: 20 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                >
+                <div>
                   <Card className="shadow-md">
                     {activeTab === "security" && (
                       <div>
@@ -1182,7 +1180,7 @@ const SettingsPage = () => {
                       </div>
                     )}
                   </Card>
-                </motion.div>
+                </div>
               </Col>
             </Row>
           </div>

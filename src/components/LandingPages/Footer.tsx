@@ -115,7 +115,7 @@ const Footer = () => {
           <div className="mb-6 md:mb-0 max-w-xs">
             <img alt="FitFlo Logo" className="h-14 mb-2" src="/logoicon.svg" />
             <p className="text-gray-600">
-              FitFlo - Your personal health companion.
+              FitFlo - Better Health, Step by Step.
             </p>
             <p className="text-gray-600">
               Helping you track symptoms and manage healthcare.

@@ -34,7 +34,7 @@ const faqs = [
     id: 5,
     question: "How can I get customer support?",
     answer:
-      "You can reach our customer support team through the in-app chat or email us at hello@fitflo.com. We're here to help 24/7!",
+      "You can reach our customer support team through the in-app chat or email us at hello@fitflo.site. We're here to help 24/7!",
   },
 ];
 

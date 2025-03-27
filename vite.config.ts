@@ -15,47 +15,19 @@ export default defineConfig({
     sourcemap: false,
     minify: "terser",
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 2000, // Increase the warning limit as we're bundling more in one chunk
+    chunkSizeWarningLimit: 5000, // Increased limit as we're bundling everything together
     outDir: "dist",
     assetsDir: "assets",
     rollupOptions: {
-      // Make sure React is externalized and loaded before any other scripts
-      external: [],
       output: {
-        // Ensure proper loading order
         entryFileNames: "assets/[name]-[hash].js",
         chunkFileNames: "assets/[name]-[hash].js",
         assetFileNames: "assets/[name]-[hash].[ext]",
-        // Bundle React with UI components to avoid context errors
         manualChunks: (id) => {
-          // Create a single vendor chunk for React and all major libraries to avoid context issues
-          if (
-            id.includes("node_modules/") && (
-              // React and React-related libraries
-              id.includes("react") ||
-              id.includes("@heroui") ||
-              id.includes("@radix-ui") ||
-              id.includes("class-variance-authority") ||
-              id.includes("clsx") ||
-              id.includes("tailwind-merge") ||
-              id.includes("tailwind-variants") ||
-              // Major libraries that might use React context
-              id.includes("antd") ||
-              id.includes("@ant-design") ||
-              id.includes("@xyflow") ||
-              id.includes("recharts") ||
-              id.includes("framer-motion")
-            )
-          ) {
-            return "vendor-bundle";
-          }
-          
-          // Other dependencies
+          // Only create two chunks: all node_modules in one chunk, app code in another
           if (id.includes("node_modules/")) {
-            return "vendor-other";
+            return "vendor";
           }
-          
-          // App code
           return "app";
         },
       },

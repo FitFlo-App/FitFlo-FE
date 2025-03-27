@@ -1,0 +1,6 @@
+# Ignore unnecessary files for Vercel deployment
+node_modules
+.git
+.github
+.vscode
+*.log

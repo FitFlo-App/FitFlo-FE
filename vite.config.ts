@@ -19,29 +19,36 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     rollupOptions: {
+      // Make sure React is externalized and loaded before any other scripts
+      external: [],
       output: {
-        // Ensure React is properly shared across all chunks
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-libs": [
-            "@heroui/system",
-            "@heroui/react",
-            "@heroui/theme",
-            "@radix-ui/react-checkbox",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-slot",
-            "class-variance-authority",
-            "clsx",
-            "tailwind-merge",
-            "tailwind-variants",
-          ],
-          "other-vendors": [
-            "antd",
-            "@ant-design/icons",
-            "@xyflow/react",
-            "openai",
-            "recharts",
-          ],
+        // Ensure proper loading order
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash].[ext]",
+        // Bundle React with UI components to avoid context errors
+        manualChunks: (id) => {
+          // Create a vendor chunk that includes React and UI libraries
+          if (
+            id.includes("node_modules/react") ||
+            id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/@heroui") ||
+            id.includes("node_modules/@radix-ui") ||
+            id.includes("node_modules/class-variance-authority") ||
+            id.includes("node_modules/clsx") ||
+            id.includes("node_modules/tailwind-merge") ||
+            id.includes("node_modules/tailwind-variants")
+          ) {
+            return "vendor-react-ui";
+          }
+          
+          // Other dependencies
+          if (id.includes("node_modules/")) {
+            return "vendor-other";
+          }
+          
+          // App code
+          return "app";
         },
       },
     },

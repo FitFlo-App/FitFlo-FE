@@ -33,8 +33,10 @@ const PathwayCanvas: React.FC<PathwayCanvasProps> = (props) => {
   // No data state
   if (
     !props.pathwayData ||
-    (props.pathwayData.nodes.length === 0 &&
-      props.pathwayData.edges.length === 0)
+    !props.pathwayData.nodes ||
+    !props.pathwayData.edges ||
+    props.pathwayData.nodes.length === 0 ||
+    props.pathwayData.edges.length === 0
   ) {
     return (
       <div className="flex flex-col justify-center items-center h-full w-full">

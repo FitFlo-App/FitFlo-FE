@@ -24,17 +24,25 @@ interface OpenRouterMessage {
   content: string;
 }
 
-interface OpenRouterResponse {
-  choices: {
-    message: {
-      role: string;
-      content: string;
-    };
-  }[];
+interface PathwayResponse {
+  pathway: {
+    nodes: {
+      id: string;
+      type: string;
+      position: { x: number; y: number };
+      data: { label: string; info: string };
+    }[];
+    edges: {
+      id: string;
+      source: string;
+      target: string;
+    }[];
+  };
+  message: string;
 }
 
 // Function to extract JSON from potentially malformed response
-function extractJsonFromText(text: string): string | null {
+function extractJsonFromText(text: string): string {
   // First try to clean up markdown and LaTeX
   let cleaned = text
     .trim()
@@ -54,7 +62,7 @@ function extractJsonFromText(text: string): string | null {
     return matches.reduce((a, b) => (a.length > b.length ? a : b));
   }
 
-  return null;
+  return "{}"; // Return empty object as string if no JSON found
 }
 
 // Convert our app's message format to OpenRouter's format
@@ -104,10 +112,12 @@ const OpenRouterService = {
         messages: formattedMessages,
       });
 
+      const content = completion.choices[0].message.content || "";
+
       // Create a new message from the AI response
       const aiMessage: ChatMessage = {
         id: uuidv4(),
-        content: completion.choices[0].message.content,
+        content: content,
         role: "assistant",
         timestamp: new Date(),
       };
@@ -166,11 +176,11 @@ const OpenRouterService = {
         temperature: 0.1, // Lower temperature for more predictable JSON formatting
       });
 
-      const responseContent = completion.choices[0].message.content;
+      const responseContent = completion.choices[0].message.content || "{}";
       
       // Try to parse the response as JSON
       try {
-        const parsedResponse = JSON.parse(responseContent);
+        const parsedResponse: PathwayResponse = JSON.parse(responseContent);
         
         // Create a response message
         const responseMessage: ChatMessage = {
@@ -191,7 +201,7 @@ const OpenRouterService = {
         const extractedJson = extractJsonFromText(responseContent);
         if (extractedJson) {
           try {
-            const parsedJson = JSON.parse(extractedJson);
+            const parsedJson: PathwayResponse = JSON.parse(extractedJson);
             
             // Create a response message
             const responseMessage: ChatMessage = {
@@ -219,42 +229,5 @@ const OpenRouterService = {
     }
   }
 };
-
-// Helper function to create a default pathway when the AI fails
-function createDefaultPathway(userMessage: string) {
-  return {
-    nodes: [
-      {
-        id: "1",
-        type: "customInput",
-        position: { x: 0, y: 0 },
-        data: { label: "Start", info: "Beginning of the pathway" },
-      },
-      {
-        id: "2",
-        type: "customDefault",
-        position: { x: 0, y: 100 },
-        data: { label: "Consult Doctor", info: "Consult with a healthcare professional" },
-      },
-      {
-        id: "3",
-        type: "customDefault",
-        position: { x: 0, y: 200 },
-        data: { label: "Follow Treatment Plan", info: "Follow the recommended treatment plan" },
-      },
-      {
-        id: "4",
-        type: "customDefault",
-        position: { x: 0, y: 300 },
-        data: { label: "Regular Check-ups", info: "Attend regular follow-up appointments" },
-      },
-    ],
-    edges: [
-      { id: "e1-2", source: "1", target: "2" },
-      { id: "e2-3", source: "2", target: "3" },
-      { id: "e3-4", source: "3", target: "4" },
-    ],
-  };
-}
 
 export default OpenRouterService;

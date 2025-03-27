@@ -28,10 +28,12 @@ export default defineConfig({
         assetFileNames: "assets/[name]-[hash].[ext]",
         // Bundle React with UI components to avoid context errors
         manualChunks: (id) => {
-          // Create a vendor chunk that includes React and UI libraries
+          // Create a vendor chunk that includes React and all React-dependent libraries
           if (
             id.includes("node_modules/react") ||
             id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/react-router") ||
+            id.includes("node_modules/react-router-dom") ||
             id.includes("node_modules/@heroui") ||
             id.includes("node_modules/@radix-ui") ||
             id.includes("node_modules/class-variance-authority") ||
@@ -40,6 +42,17 @@ export default defineConfig({
             id.includes("node_modules/tailwind-variants")
           ) {
             return "vendor-react-ui";
+          }
+          
+          // Other major libraries
+          if (
+            id.includes("node_modules/antd") ||
+            id.includes("node_modules/@ant-design") ||
+            id.includes("node_modules/@xyflow") ||
+            id.includes("node_modules/openai") ||
+            id.includes("node_modules/recharts")
+          ) {
+            return "vendor-libs";
           }
           
           // Other dependencies

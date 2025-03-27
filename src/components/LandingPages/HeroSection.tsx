@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { FaArrowRight, FaChartLine } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";
@@ -9,6 +8,7 @@ import { Link } from "react-router-dom";
 import dashboardImg from "../../assets/dashboard.png";
 
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import LazyImage from "@/components/ui/lazy-image";
 
 // Animation variants for floating effect
 const floatingAnimation = {
@@ -54,7 +54,6 @@ const pulseAnimation = {
 
 const HeroSection = () => {
   const { scrollYProgress } = useScroll();
-  const [_mounted, setMounted] = useState(false);
 
   // Mengubah range scrollYProgress dari [0, 0.4] menjadi [0, 0.2] agar efek lebih cepat
   // Dan memperbesar nilai rotasi dari 15 menjadi 25 derajat
@@ -62,11 +61,6 @@ const HeroSection = () => {
   const scale = useTransform(scrollYProgress, [0, 0.1], [0.9, 1]);
   // Memperbesar range pergerakan y dari [-80, 30] menjadi [-120, 50]
   const y = useTransform(scrollYProgress, [0, 0.08], [-120, 50]);
-
-  // Client-side only mounting
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div className="relative">
@@ -176,7 +170,7 @@ const HeroSection = () => {
                   ease: "easeInOut",
                 }}
               >
-                <img
+                <LazyImage
                   alt="Health Dashboard"
                   className="w-full h-auto"
                   src={dashboardImg}

@@ -46,6 +46,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
+import LazyImage from "@/components/ui/lazy-image";
 
 import Hospital1 from "@/assets/hospital1.jpg";
 import Hospital2 from "@/assets/hospital2.png";
@@ -759,7 +760,7 @@ const HealthcarePage = () => {
                 <Skeleton.Image active className="h-48 w-full" />
               ) : (
                 <>
-                  <img
+                  <LazyImage
                     alt={facility.name}
                     className="h-48 w-full object-cover transition-transform hover:scale-105 duration-500"
                     src={facility.picture}

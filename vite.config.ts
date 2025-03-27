@@ -15,7 +15,7 @@ export default defineConfig({
     sourcemap: false,
     minify: "terser",
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 2000, // Increase the warning limit as we're bundling more in one chunk
     outDir: "dist",
     assetsDir: "assets",
     rollupOptions: {
@@ -28,31 +28,26 @@ export default defineConfig({
         assetFileNames: "assets/[name]-[hash].[ext]",
         // Bundle React with UI components to avoid context errors
         manualChunks: (id) => {
-          // Create a vendor chunk that includes React and all React-dependent libraries
+          // Create a single vendor chunk for React and all major libraries to avoid context issues
           if (
-            id.includes("node_modules/react") ||
-            id.includes("node_modules/react-dom") ||
-            id.includes("node_modules/react-router") ||
-            id.includes("node_modules/react-router-dom") ||
-            id.includes("node_modules/@heroui") ||
-            id.includes("node_modules/@radix-ui") ||
-            id.includes("node_modules/class-variance-authority") ||
-            id.includes("node_modules/clsx") ||
-            id.includes("node_modules/tailwind-merge") ||
-            id.includes("node_modules/tailwind-variants")
+            id.includes("node_modules/") && (
+              // React and React-related libraries
+              id.includes("react") ||
+              id.includes("@heroui") ||
+              id.includes("@radix-ui") ||
+              id.includes("class-variance-authority") ||
+              id.includes("clsx") ||
+              id.includes("tailwind-merge") ||
+              id.includes("tailwind-variants") ||
+              // Major libraries that might use React context
+              id.includes("antd") ||
+              id.includes("@ant-design") ||
+              id.includes("@xyflow") ||
+              id.includes("recharts") ||
+              id.includes("framer-motion")
+            )
           ) {
-            return "vendor-react-ui";
-          }
-          
-          // Other major libraries
-          if (
-            id.includes("node_modules/antd") ||
-            id.includes("node_modules/@ant-design") ||
-            id.includes("node_modules/@xyflow") ||
-            id.includes("node_modules/openai") ||
-            id.includes("node_modules/recharts")
-          ) {
-            return "vendor-libs";
+            return "vendor-bundle";
           }
           
           // Other dependencies

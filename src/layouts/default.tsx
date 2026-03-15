@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar";
+import { AnnouncementBanner } from "@/components/LandingPages/AnnouncementBanner";
 
 export default function DefaultLayout({
   children,
@@ -6,7 +7,8 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
+      <AnnouncementBanner />
       <Navbar />
       <main className="flex-grow">{children}</main>
     </div>

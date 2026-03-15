@@ -39,7 +39,7 @@ export const Navbar = () => {
   return (
     <HeroUINavbar
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300",
+        "sticky top-0 w-full z-50 transition-all duration-300",
         scrolled ? "bg-white/70 backdrop-blur-md shadow-sm" : "bg-transparent"
       )}
       isMenuOpen={isMenuOpen}

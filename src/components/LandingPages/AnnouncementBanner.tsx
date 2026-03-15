@@ -51,33 +51,37 @@ export const AnnouncementBanner = () => {
                   </p>
                   
                   <div className="flex flex-wrap gap-x-8 gap-y-3">
-                    <a href="https://fitflo.faizath.com" className="group flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-800 transition-colors">
+                    <a href={import.meta.env.VITE_WEB_URL || "https://fitflo.faizath.com"} className="group flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-800 transition-colors">
                       <div className="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
                         <Globe size={14} />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] text-blue-500 uppercase tracking-wider font-bold">New Website</span>
-                        <span className="flex items-center gap-1">fitflo.faizath.com <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
+                        <span className="flex items-center gap-1">
+                          {(import.meta.env.VITE_WEB_URL || "https://fitflo.faizath.com").replace(/^https?:\/\//, "")} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </span>
                       </div>
                     </a>
 
-                    <a href="https://fitflo-api.faizath.com" className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
+                    <a href={import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com"} className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
                       <div className="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
                         <Server size={14} />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">New API</span>
-                        <span className="flex items-center gap-1">fitflo-api.faizath.com <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
+                        <span className="flex items-center gap-1">
+                          {(import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com").replace(/^https?:\/\//, "")} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </span>
                       </div>
                     </a>
 
-                    <a href="mailto:fitflo@faizath.com" className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
+                    <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"}`} className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
                       <div className="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
                         <Mail size={14} />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">New Email</span>
-                        <span className="flex items-center gap-1">fitflo@faizath.com <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
+                        <span className="flex items-center gap-1">{import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
                       </div>
                     </a>
                   </div>

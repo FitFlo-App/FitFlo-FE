@@ -39,9 +39,10 @@ const OAuthCallbackHandler = () => {
       const token = searchParams.get("token");
       const errorMsg = searchParams.get("error");
       const baseUrl =
-        window.location.hostname === "localhost"
+        import.meta.env.VITE_WEB_URL ||
+        (window.location.hostname === "localhost"
           ? "http://localhost:5173"
-          : "https://fitflo.faizath.com";
+          : "https://fitflo.faizath.com");
 
       if (errorMsg || !token) {
         console.error(
@@ -76,7 +77,7 @@ const OAuthCallbackHandler = () => {
         // Single API call to check profile
         console.log("OAuthCallbackHandler: Calling /user/profile/read");
         const response = await fetch(
-          "https://fitflo-api.faizath.com/user/profile/read",
+          `${import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com"}/user/profile/read`,
           {
             method: "GET",
             headers: {

@@ -257,7 +257,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           "Checking profile status before proceeding to dashboard..."
         );
         const response = await fetch(
-          "https://fitflo-api.faizath.com/user/profile/read",
+          `${import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com"}/user/profile/read`,
           {
             method: "GET",
             headers: {

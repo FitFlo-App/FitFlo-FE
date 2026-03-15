@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://fitflo-api.faizath.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com";
 
 // Create axios instance with base URL
 const api = axios.create({

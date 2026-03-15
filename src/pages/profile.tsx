@@ -58,7 +58,7 @@ const Profile = () => {
       };
 
       const response = await fetch(
-        "https://fitflo-api.faizath.com/user/profile/update",
+        `${import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com"}/user/profile/update`,
         {
           method: "PUT",
           headers: {
@@ -105,7 +105,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "https://fitflo-api.faizath.com/user/profile/read",
+          `${import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com"}/user/profile/read`,
           {
             method: "GET",
             headers: {
@@ -190,7 +190,11 @@ const Profile = () => {
                   </Title>
                   <Text type="secondary" style={{ fontSize: 14 }}>
                     <LinkOutlined style={{ marginRight: 6 }} />
-                    fitflo.faizath.com/user/
+                    {(
+                      import.meta.env.VITE_WEB_URL ||
+                      "https://fitflo.faizath.com"
+                    ).replace(/^https?:\/\//, "")}
+                    /user/
                     {user.name.toLowerCase().replace(/\s+/g, "-")}
                   </Text>
                 </div>

@@ -41,7 +41,7 @@ const OAuthCallbackHandler = () => {
       const baseUrl =
         window.location.hostname === "localhost"
           ? "http://localhost:5173"
-          : "https://fitflo.site";
+          : "https://fitflo.faizath.com";
 
       if (errorMsg || !token) {
         console.error(
@@ -76,7 +76,7 @@ const OAuthCallbackHandler = () => {
         // Single API call to check profile
         console.log("OAuthCallbackHandler: Calling /user/profile/read");
         const response = await fetch(
-          "https://api.fitflo.site/user/profile/read",
+          "https://fitflo-api.faizath.com/user/profile/read",
           {
             method: "GET",
             headers: {

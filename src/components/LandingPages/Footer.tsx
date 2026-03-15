@@ -129,7 +129,7 @@ const Footer = () => {
             <div className="mb-6 md:mb-0">
               <p className="text-gray-600 mb-2 text-right">
                 <EmailIcon className="inline-block h-5 w-5 mr-2" />
-                hello@fitflo.site
+                fitflo@faizath.com
               </p>
               <p className="text-gray-600 text-right">
                 <LocationIcon className="inline-block h-5 w-5 mr-2" />
@@ -206,7 +206,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-gray-200 py-4 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 mb-4 md:mb-0">
-            &copy; 2024 FitFlo - All rights reserved
+            &copy; 2026 FitFlo - All rights reserved
           </p>
           <div className="flex space-x-4">
             <Link className="text-gray-600 hover:text-blue-500" href="#">

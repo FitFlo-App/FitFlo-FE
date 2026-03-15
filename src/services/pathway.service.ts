@@ -96,7 +96,7 @@ const createMessageId = (): string => {
 // Get API URL based on environment
 // Commented out since it's only used in the commented code below
 // const getApiUrl = (): string => {
-//   return import.meta.env.VITE_API_URL || "https://api.fitflo.site";
+//   return import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com";
 // };
 
 // Service class for pathway-related operations

@@ -58,7 +58,7 @@ const Profile = () => {
       };
 
       const response = await fetch(
-        "https://api.fitflo.site/user/profile/update",
+        "https://fitflo-api.faizath.com/user/profile/update",
         {
           method: "PUT",
           headers: {
@@ -105,7 +105,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "https://api.fitflo.site/user/profile/read",
+          "https://fitflo-api.faizath.com/user/profile/read",
           {
             method: "GET",
             headers: {
@@ -190,7 +190,7 @@ const Profile = () => {
                   </Title>
                   <Text type="secondary" style={{ fontSize: 14 }}>
                     <LinkOutlined style={{ marginRight: 6 }} />
-                    fitflo.site/user/
+                    fitflo.faizath.com/user/
                     {user.name.toLowerCase().replace(/\s+/g, "-")}
                   </Text>
                 </div>

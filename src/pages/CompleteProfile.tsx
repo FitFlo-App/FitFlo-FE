@@ -126,7 +126,7 @@ const CompleteProfile = () => {
 
       // Make the API call to create profile with authorization header
       const response = await axios.post(
-        "https://api.fitflo.site/user/profile/create",
+        "https://fitflo-api.faizath.com/user/profile/create",
         requestBody,
         {
           headers: {

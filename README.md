@@ -47,7 +47,7 @@
 ## Project Overview
 FitFlo is an AI-powered healthcare pathway planner designed to deliver a seamless and interactive user experience. This front-end, built with React and Vite, provides an intuitive interface for users to manage their health journeys, view personalized AI-driven recommendations, and navigate healthcare options with ease. It integrates visually rich components, smooth animations, and responsive design to enhance usability and engagement.
 
-FitFlo is deployed on [fitflo.site](https://fitflo.site) and it's API (Back End) deployed on [api.fitflo.site](https://api.fitflo.site)
+FitFlo is deployed on [fitflo.faizath.com](https://fitflo.faizath.com) and it's API (Back End) deployed on [fitflo-api.faizath.com](https://fitflo-api.faizath.com)
 
 FitFlo Front-End Repository: [https://github.com/FitFlo-App/FitFlo-FE](https://github.com/FitFlo-App/FitFlo-FE)<br>
 FitFlo Back-End Repository: [https://github.com/FitFlo-App/FitFlo-BE](https://github.com/FitFlo-App/FitFlo-BE)

@@ -16,7 +16,7 @@
 <br />
 <div align="center">
   <a href="https://fitflo.faizath.com/">
-    <img src="public/logo.svg" alt="FitFlo Logo" width="120" height="120">
+    <img src="public/logo.png" alt="FitFlo Logo">
   </a>
 
   <h1 align="center">FitFlo</h1>

@@ -75,13 +75,13 @@ export const AnnouncementBanner = () => {
                       </div>
                     </a>
 
-                    <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"}`} className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
+                    <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"}`} className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
                       <div className="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
                         <Mail size={14} />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">New Email</span>
-                        <span className="flex items-center gap-1">{import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
+                        <span className="flex items-center gap-1">{import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /></span>
                       </div>
                     </a>
                   </div>

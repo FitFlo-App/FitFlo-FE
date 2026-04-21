@@ -5,7 +5,7 @@
   "type": "module",
   "description": "FitFlo AI Health Path Optimizer Front-End",
   "license": "MIT",
-  "author": "FitFlo Developers <fitflo@faizath.com>",
+  "author": "FitFlo Developers <dev@fitflo.faizath.com>",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

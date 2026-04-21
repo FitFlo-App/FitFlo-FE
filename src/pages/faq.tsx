@@ -319,7 +319,7 @@ const Faq = () => {
       label: "How do I contact customer support?",
       children: (
         <Paragraph>
-          You can reach our support team by emailing us at {import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"}.
+          You can reach our support team by emailing us at {import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"}.
           We aim to respond to all inquiries within 24-48 hours.
         </Paragraph>
       ),
@@ -340,7 +340,7 @@ const Faq = () => {
       children: (
         <Paragraph>
           We welcome feedback! You can submit your suggestions or report issues
-          by contacting us at {import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"} or through the Feedback form
+          by contacting us at {import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"} or through the Feedback form
           in the Settings menu.
         </Paragraph>
       ),
@@ -470,7 +470,7 @@ const Faq = () => {
               <Paragraph style={{ textAlign: "center", marginTop: 24 }}>
                 Couldn&apos;t find what you&apos;re looking for? Contact our
                 support team at{" "}
-                <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"}`}>{import.meta.env.VITE_CONTACT_EMAIL || "fitflo@faizath.com"}</a>
+                <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"}`}>{import.meta.env.VITE_CONTACT_EMAIL || "contact@fitflo.faizath.com"}</a>
               </Paragraph>
             </Card>
           </Col>

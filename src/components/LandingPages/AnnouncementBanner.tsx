@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Megaphone, Globe, Server, Mail, ExternalLink } from "lucide-react";
+import { X, Megaphone, Globe, Server, Mail, ExternalLink, Activity } from "lucide-react";
 
 export const AnnouncementBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -46,8 +46,8 @@ export const AnnouncementBanner = () => {
                   
                   <p className="text-sm md:text-base text-gray-600 mb-4 max-w-4xl leading-relaxed">
                     Since <b>13 March 2026</b>, FitFlo has transitioned to new official domains. 
-                    The previous <code>fitflo.site</code> domain was not renewed. 
-                    Please update your bookmarks and contacts to stay connected.
+                    The previous <code>fitflo.site</code> domain was not renewed.
+                    Below are the new official links for the website, API, and contact.
                   </p>
                   
                   <div className="flex flex-wrap gap-x-8 gap-y-3">
@@ -71,6 +71,18 @@ export const AnnouncementBanner = () => {
                         <span className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">New API</span>
                         <span className="flex items-center gap-1">
                           {(import.meta.env.VITE_API_URL || "https://fitflo-api.faizath.com").replace(/^https?:\/\//, "")} <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </span>
+                      </div>
+                    </a>
+
+                    <a href="https://status.faizath.com/status/fitflo" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-2 text-sm font-medium text-indigo-700 hover:text-indigo-800 transition-colors">
+                      <div className="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
+                        <Activity size={14} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">Status Page</span>
+                        <span className="flex items-center gap-1">
+                          status.faizath.com/status/fitflo <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                         </span>
                       </div>
                     </a>
